@@ -127,7 +127,7 @@ A smart travel companion app designed to revolutionize the tourism experience in
 
 ## 📚 References
 
-All research and technical validations are referenced in the [submission document](./Ideate_Submission_442_TravelEase.pdf). Includes sources from WEF, SITA, SLTDA, and more.
+All research and technical validations are referenced in the [submission document](https://drive.google.com/file/d/1Om_W48YLUOI_sXq1vRVZ9mGb5K2SDBBE/view?usp=sharing). Includes sources from WEF, SITA, SLTDA, and more.
 
 ---
 
