@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "NodeNext",
     "jsx": "react-native",
     "strict": true,
     "esModuleInterop": true,
@@ -9,6 +9,7 @@
     "moduleResolution": "nodenext",
     "customConditions": [],
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "noEmit": true,
     "isolatedModules": true,
