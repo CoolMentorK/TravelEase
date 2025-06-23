@@ -1,4 +1,4 @@
-import Constants from 'expo-constants';
+import Constants from 'expo-constants'
 
 const ENV = {
   dev: {
@@ -10,12 +10,12 @@ const ENV = {
     API_BASE_URL: 'https://api.travelease.com',
     STRIPE_PUBLISHABLE_KEY: 'pk_live_51Hxxxxxxx',
     PAYHERE_MERCHANT_ID: '1212345',
-  }
-};
+  },
+}
 
-const getEnvVars = (env = Constants.manifest.releaseChannel) => {
-  if (__DEV__) return ENV.dev;
-  else return ENV.prod;
-};
+const getEnvVars = (env = Constants.expoConfig?.releaseChannel) => {
+  if (__DEV__) return ENV.dev
+  return ENV.prod
+}
 
-export default getEnvVars();
+export default getEnvVars()
