@@ -86,6 +86,8 @@ out/
 *.zip
 build/Release
 .lock-wscript
+package-lock.json
+package.json
 
 # ========================
 # Misc
