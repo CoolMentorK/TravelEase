@@ -24,7 +24,6 @@ export default function MainStack() {
     <Stack.Navigator initialRouteName='Login'>
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
-      <Stack.Screen name='Home' component={HomeScreen} />
       <Stack.Screen name='Home' component={HomeScreen} options={{ title: 'TravelEase' }} />
       <Stack.Screen
                 name='Itinerary'
@@ -33,15 +32,6 @@ export default function MainStack() {
             />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='Wallet' component={WalletScreen} options={{ title: 'My Wallet' }} />
-      <Stack.Screen 
-        name='Itinerary' 
-        component={ItineraryScreen}
-        options={{ title: 'My Itinerary' }}
-      />
-      <Stack.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-      />
     </Stack.Navigator>
   );
 }
