@@ -21,6 +21,7 @@ export const register = async (req: Request, res: Response) => {
       token,
     })
   } catch (err) {
+    console.error(err)
     res.status(500).json({ error: 'Registration failed' })
   }
 }
@@ -41,12 +42,13 @@ export const login = async (req: Request, res: Response) => {
       token,
     })
   } catch (err) {
+    console.error(err)
     res.status(500).json({ error: 'Login failed' })
   }
 }
 
 export const getProfile = async (req: Request, res: Response) => {
-  // @ts-ignore (for now, unless you define a custom user type)
+  // @ts-expect-error (for now, unless you define a custom user type)
   const user = await User.findById(req.user.id).select('-password')
   if (!user) return res.status(404).json({ error: 'User not found' })
 

@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     walletBalance: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 userSchema.pre('save', async function () {
