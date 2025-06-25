@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/MainStack.tsx';
 import { useTranslation } from 'react-i18next';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>; // Update to include all routes
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -23,7 +23,7 @@ export default function HomeScreen() {
       title: t('home.digitalWallet'),
       description: t('home.digitalWalletDesc'),
       icon: '💳',
-      action: () => console.log('Wallet coming soon'),
+      action: () => navigation.navigate('Wallet'), // Navigate to WalletScreen
     },
     {
       title: t('home.offlineMaps'),
