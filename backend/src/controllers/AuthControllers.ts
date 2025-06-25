@@ -12,7 +12,7 @@ const generateToken = (id: string): string => {
 }
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { email, password } = req.body
+  const { name, email, password } = req.body;
 
   try {
     const existing = await User.findOne({ email })
@@ -21,11 +21,11 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       return
     }
 
-    const user = await User.create({ email, password })
-    const token = generateToken(user._id) // No .toString() needed if _id is string
+    const user = await User.create({ name, email, password }) // Include name
+    const token = generateToken(user._id.toString())
 
     res.status(201).json({
-      user: { id: user._id, email: user.email, walletBalance: user.walletBalance },
+      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
       token,
     })
   } catch (err) {
@@ -46,7 +46,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     const token = generateToken(user._id) // No .toString() needed if _id is string
 
     res.json({
-      user: { id: user._id, email: user.email, walletBalance: user.walletBalance },
+      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
       token,
     })
   } catch (err) {
@@ -57,17 +57,24 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 export const getProfile = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
-    const user = await User.findById(req.user?.id).select('-password')
+    const user = await User.findById(req.user?.id).select('-password');
     if (!user) {
-      res.status(404).json({ error: 'User not found' })
-      return
+      res.status(404).json({ error: 'User not found' });
+      return;
     }
 
-    res.json(user)
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      walletBalance: user.walletBalance,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};

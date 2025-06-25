@@ -16,6 +16,7 @@ interface IUser extends Document {
 // Define the User schema
 const userSchema = new Schema<IUser>(
   {
+    name: { type: String, required: true }, // Add name field
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     walletBalance: { type: Number, default: 0 },
@@ -40,6 +41,5 @@ userSchema.methods.comparePassword = async function comparePassword(
   return bcrypt.compare(candidate, this.password)
 }
 
-// Create and export the User model
-const User = model<IUser>('User', userSchema)
-export default User
+const User = model<IUser>('User', userSchema);
+export default User;
