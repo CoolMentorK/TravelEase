@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import { topUpWallet } from '../../services/walletService.ts';
+import { convertUSDToLKR } from '../../utils/currency.ts';
 
 interface Props {
   onTopUpSuccess: () => void;
@@ -21,6 +22,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 12,
     padding: 12,
+  },
+  rateContainer: {
+    marginBottom: 12,
+  },
+  rateLabel: {
+    color: '#555',
+    fontSize: 14,
+  },
+  rateValue: {
+    color: '#2e7d32',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
@@ -44,6 +57,8 @@ const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
     }
   };
 
+  const converted = convertUSDToLKR(parseFloat(amount) || 0);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -53,6 +68,13 @@ const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
         value={amount}
         onChangeText={setAmount}
       />
+
+      {/* 👇 Conversion Display */}
+      <View style={styles.rateContainer}>
+        <Text style={styles.rateLabel}>You’ll receive:</Text>
+        <Text style={styles.rateValue}>LKR {converted.toFixed(2)}</Text>
+      </View>
+
       <Button title='Top Up Wallet' onPress={handleTopUp} />
     </View>
   );

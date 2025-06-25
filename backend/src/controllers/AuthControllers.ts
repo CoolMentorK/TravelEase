@@ -12,7 +12,7 @@ const generateToken = (id: string): string => {
 }
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { name, email, password } = req.body;
+  const { name, email, password } = req.body
 
   try {
     const existing = await User.findOne({ email })
@@ -57,13 +57,13 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 export const getProfile = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
-    const user = await User.findById(req.user?.id).select('-password');
+    const user = await User.findById(req.user?.id).select('-password')
     if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
+      res.status(404).json({ error: 'User not found' })
+      return
     }
 
     res.json({
@@ -73,8 +73,8 @@ export const getProfile = async (
       walletBalance: user.walletBalance,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    });
+    })
   } catch (err) {
-    next(err);
+    next(err)
   }
-};
+}

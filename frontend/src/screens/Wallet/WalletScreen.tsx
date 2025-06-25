@@ -22,7 +22,8 @@ const WalletScreen = () => {
     try {
       const fetchedBalance = await getBalance();
       setBalance(fetchedBalance);
-    } catch {
+    } catch (err: any) {
+      console.error('Error loading balance:', err.response?.data || err.message);
       Alert.alert('Error', 'Failed to load wallet balance');
     }
   };

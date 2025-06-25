@@ -9,21 +9,24 @@ import WalletScreen from '../screens/Wallet/WalletScreen.tsx';
 import VendorLoginScreen from "../screens/Vendor/VendorLoginScreen.tsx";
 import VendorRegisterScreen from "../screens/Vendor/VendorRegisterScreen.tsx";
 import VendorDashboardScreen from "../screens/Vendor/VendorDashboard.tsx";
+import PaymentScreen from '../screens/Wallet/PaymentScreen.tsx';
+import TransactionHistoryScreen from '../screens/Wallet/TransactionHistoryScreen.tsx';
+
 
 export type RootStackParamList = {
   Home: undefined;
-  Login:undefined;
-  Signup:undefined;
+  Login: undefined;
+  Signup: undefined;
   Itinerary: undefined;
   Settings: undefined;
   Wallet: undefined;
+  Payment: undefined;
+  Transactions: undefined;
 };
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function MainStack() {
   return (
-
     <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: true }}>
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
@@ -34,14 +37,16 @@ export default function MainStack() {
         component={ItineraryScreen}
         options={{ title: 'My Itinerary' }}
       />
-      <Stack.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-      />
-       <Stack.Screen name='VendorLogin' component={VendorLoginScreen} options={{ title: 'Vendor Login' }} />
-        <Stack.Screen name='VendorRegister' component={VendorRegisterScreen} options={{ title: 'Vendor Register' }} />
-        <Stack.Screen name='VendorDashboard' component={VendorDashboardScreen} />
+      <Stack.Screen name='Settings' component={SettingsScreen} />
 
+      {/* Vendor-related Screens */}
+      <Stack.Screen name='VendorLogin' component={VendorLoginScreen} options={{ title: 'Vendor Login' }} />
+      <Stack.Screen name='VendorRegister' component={VendorRegisterScreen} options={{ title: 'Vendor Register' }} />
+      <Stack.Screen name='VendorDashboard' component={VendorDashboardScreen} />
+
+      {/* Tourist payment-related Screens */}
+      <Stack.Screen name='Payment' component={PaymentScreen} options={{ title: 'Pay Vendor' }} />
+      <Stack.Screen name='Transactions' component={TransactionHistoryScreen} options={{ title: 'Transaction History' }} />
     </Stack.Navigator>
   );
 }
