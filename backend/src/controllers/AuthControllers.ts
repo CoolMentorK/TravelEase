@@ -7,17 +7,17 @@ const generateToken = (id: string) => {
 }
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body
+  const { name, email, password } = req.body // Add name to destructuring
 
   try {
     const existing = await User.findOne({ email })
     if (existing) return res.status(400).json({ error: 'Email already in use' })
 
-    const user = await User.create({ email, password })
+    const user = await User.create({ name, email, password }) // Include name
     const token = generateToken(user._id.toString())
 
     res.status(201).json({
-      user: { id: user._id, email: user.email, walletBalance: user.walletBalance },
+      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
       token,
     })
   } catch (err) {
@@ -38,7 +38,7 @@ export const login = async (req: Request, res: Response) => {
     const token = generateToken(user._id.toString())
 
     res.json({
-      user: { id: user._id, email: user.email, walletBalance: user.walletBalance },
+      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
       token,
     })
   } catch (err) {
@@ -52,5 +52,5 @@ export const getProfile = async (req: Request, res: Response) => {
   const user = await User.findById(req.user.id).select('-password')
   if (!user) return res.status(404).json({ error: 'User not found' })
 
-  res.json(user)
+  res.json(user) // Name will be included automatically
 }
