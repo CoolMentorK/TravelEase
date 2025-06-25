@@ -8,11 +8,13 @@ import {
   Alert,
   useColorScheme,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import getEnvVars from '../../config.tsx';
 
 const { API_BASE_URL } = getEnvVars();
 
 export default function SignupScreen({ navigation }: any) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const isDarkMode = useColorScheme() === 'dark';
@@ -22,17 +24,25 @@ export default function SignupScreen({ navigation }: any) {
       const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Signup failed');
 
-      Alert.alert('Account Created', `Welcome ${data.user.email}`);
+      Alert.alert('Account Created', `Welcome ${data.user.name}`);
       navigation.navigate('Home');
     } catch (err: any) {
       Alert.alert('Signup Failed', err.message);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    Alert.alert('Google Login', 'Feature coming soon!');
+  };
+
+  const handleAppleLogin = () => {
+    Alert.alert('Apple Login', 'Feature coming soon!');
   };
 
   return (
@@ -56,6 +66,19 @@ export default function SignupScreen({ navigation }: any) {
         Create Account
       </Text>
 
+      <TextInput
+        placeholder="Name"
+        placeholderTextColor={isDarkMode ? '#A0A0A0' : '#888'}
+        style={[
+          styles.input,
+          {
+            backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+            borderColor: isDarkMode ? '#4FB993' : '#DDD',
+          },
+        ]}
+        onChangeText={setName}
+        accessibilityLabel="Name input"
+      />
       <TextInput
         placeholder="Email"
         placeholderTextColor={isDarkMode ? '#A0A0A0' : '#888'}
@@ -96,6 +119,46 @@ export default function SignupScreen({ navigation }: any) {
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
+      <Text style={[styles.orText, { color: isDarkMode ? '#A0A0A0' : '#888' }]}>
+        OR
+      </Text>
+
+      <View style={styles.socialButtonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.socialButton,
+            {
+              backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+              borderColor: isDarkMode ? '#4FB993' : '#000000',
+            },
+          ]}
+          onPress={handleGoogleLogin}
+          accessibilityRole="button"
+          accessibilityLabel="Sign up with Google"
+        >
+          <Icon
+            name="google"
+            size={24}
+            color={isDarkMode ? '#E0E0E0' : '#000000'}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.socialButton,
+            {
+              backgroundColor: '#000000',
+              borderColor: isDarkMode ? '#4FB993' : '#000000',
+            },
+          ]}
+          onPress={handleAppleLogin}
+          accessibilityRole="button"
+          accessibilityLabel="Sign up with Apple"
+        >
+          <Icon name="apple" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
         onPress={() => navigation.navigate('Login')}
         style={styles.linkWrapper}
@@ -117,10 +180,10 @@ export default function SignupScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex:1,
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingTop: 60, // Adjusted for logo placement
+    paddingTop: 30, // Adjusted for logo placement
     // Subtle cultural motif: faint shadow for depth
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -133,13 +196,13 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     textAlign: 'center',
     // Subtle saffron underline for cultural accent
+    textDecorationLine: 'underline',
     textDecorationColor: '#F2C94C',
     textDecorationStyle: 'solid',
   },
   title: {
     fontSize: 28,
     fontWeight: '600',
-    marginTop:50,
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -172,6 +235,31 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
+  },
+  orText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginVertical: 20,
+    textAlign: 'center',
+  },
+  socialButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '60%',
+    marginBottom: 16,
+  },
+  socialButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Subtle cultural accent with Tea Green border in dark mode
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   linkWrapper: {
     marginTop: 20,

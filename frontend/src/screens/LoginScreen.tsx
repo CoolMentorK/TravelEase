@@ -8,6 +8,7 @@ import {
   Alert,
   useColorScheme,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import getEnvVars from '../../config.tsx';
 
 const { API_BASE_URL } = getEnvVars();
@@ -33,6 +34,14 @@ export default function LoginScreen({ navigation }: any) {
     } catch (err: any) {
       Alert.alert('Login Failed', err.message);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    Alert.alert('Google Login', 'Feature coming soon!');
+  };
+
+  const handleAppleLogin = () => {
+    Alert.alert('Apple Login', 'Feature coming soon!');
   };
 
   return (
@@ -112,6 +121,46 @@ export default function LoginScreen({ navigation }: any) {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
+      <Text style={[styles.orText, { color: isDarkMode ? '#A0A0A0' : '#888' }]}>
+        OR
+      </Text>
+
+      <View style={styles.socialButtonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.socialButton,
+            {
+              backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+              borderColor: isDarkMode ? '#4FB993' : '#000000',
+            },
+          ]}
+          onPress={handleGoogleLogin}
+          accessibilityRole="button"
+          accessibilityLabel="Login with Google"
+        >
+          <Icon
+            name="google"
+            size={24}
+            color={isDarkMode ? '#E0E0E0' : '#000000'}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.socialButton,
+            {
+              backgroundColor: '#000000',
+              borderColor: isDarkMode ? '#4FB993' : '#000000',
+            },
+          ]}
+          onPress={handleAppleLogin}
+          accessibilityRole="button"
+          accessibilityLabel="Login with Apple"
+        >
+          <Icon name="apple" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
         onPress={() => navigation.navigate('Signup')}
         style={styles.linkWrapper}
@@ -136,8 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingTop: 60, // Adjusted for logo placement
-    // Subtle cultural motif: faint shadow for depth
+    paddingTop: 30,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -148,14 +196,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 100,
     textAlign: 'center',
-    // Subtle saffron underline for cultural accent
     textDecorationColor: '#F2C94C',
     textDecorationStyle: 'solid',
   },
   title: {
     fontSize: 28,
     fontWeight: '600',
-    marginTop:50,
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -166,7 +212,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     width: '100%',
-    // Add subtle cultural accent with Tea Green border in dark mode
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -175,7 +220,7 @@ const styles = StyleSheet.create({
   forgotWrapper: {
     alignSelf: 'flex-end',
     marginBottom: 12,
-    padding: 8, // Larger tap target
+    padding: 8,
   },
   forgotText: {
     fontSize: 14,
@@ -187,7 +232,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     width: '100%',
-    // Ensure button stands out with slight elevation
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -198,10 +242,34 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  orText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginVertical: 20,
+    textAlign: 'center',
+  },
+  socialButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '60%',
+    marginBottom: 16,
+  },
+  socialButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
   linkWrapper: {
     marginTop: 20,
     alignItems: 'center',
-    padding: 8, // Larger tap target
+    padding: 8,
   },
   linkText: {
     fontSize: 14,
