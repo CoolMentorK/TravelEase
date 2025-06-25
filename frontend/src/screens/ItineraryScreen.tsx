@@ -7,275 +7,218 @@ import ItineraryInput from '../components/ItineraryInput.tsx';
 import type { ItineraryItem } from '../services/api.tsx';
 import { itineraryApi } from '../services/api.tsx';
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '../constants/colors.ts';
+import { useRoute } from '@react-navigation/native';
 
 export default function ItineraryScreen() {
   const { t } = useTranslation();
-  const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>([]);
-  const [filteredItems, setFilteredItems] = useState<ItineraryItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [inputVisible, setInputVisible] = useState(false);
-  const [editingItem, setEditingItem] = useState<ItineraryItem | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const route = useRoute();
+  // @ts-ignore
+  const plannedItinerary = route.params?.plannedItinerary;
 
-  const categoryKeys = [
-    'all',
-    'attraction',
-    'restaurant',
-    'hotel',
-    'transport',
-    'shopping',
-    'other',
-  ];
-  const categories = categoryKeys.map(key => ({ key, label: t(`itinerary.${key}`) }));
-
-  useEffect(() => {
-    loadItineraryData();
-  }, []);
-
-  useEffect(() => {
-    filterItems();
-  }, [searchQuery, selectedCategory, itineraryItems]);
-
-  const loadItineraryData = async () => {
-    setLoading(true);
-    try {
-      const sampleData: ItineraryItem[] = [
-        {
-          id: '1',
-          title: 'Sigiriya Rock Fortress',
-          location: 'Sigiriya, Central Province',
-          time: '08:00 AM',
-          duration: '3 hours',
-          category: 'attraction',
-          price: 'LKR 5,000',
-          rating: 4.8,
-        },
-        {
-          id: '2',
-          title: 'Traditional Sri Lankan Lunch',
-          location: 'Kandy City',
-          time: '12:00 PM',
-          duration: '1 hour',
-          category: 'restaurant',
-          price: 'LKR 1,200',
-          rating: 4.5,
-        },
-        {
-          id: '3',
-          title: 'Temple of the Tooth',
-          location: 'Kandy',
-          time: '02:00 PM',
-          duration: '2 hours',
-          category: 'attraction',
-          price: 'LKR 1,500',
-          rating: 4.7,
-        },
-      ];
-      setItineraryItems(sampleData);
-      setFilteredItems(sampleData);
-    } catch (error) {
-      showSnackbar(t('itinerary.load_failed'));
-      console.error('Error loading itinerary data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterItems = () => {
-    let filtered = itineraryItems;
-
-    if (searchQuery) {
-      filtered = filtered.filter(
-        item =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.location.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(item => item.category.toLowerCase() === selectedCategory);
-    }
-
-    setFilteredItems(filtered);
-  };
-
-  const showSnackbar = (message: string) => {
-    setSnackbarMessage(message);
-    setSnackbarVisible(true);
-  };
-
-  const handleAddItem = async (data: ItineraryFormData) => {
-    try {
-      const newItem: ItineraryItem = {
-        id: Date.now().toString(),
-        ...data,
-        rating: Math.floor(Math.random() * 2) + 4,
-      };
-      setItineraryItems(prev => [...prev, newItem]);
-      showSnackbar(t('itinerary.item_added'));
-    } catch (error) {
-      showSnackbar(t('itinerary.add_failed'));
-      console.error('Error adding item:', error);
-    }
-  };
-
-  const handleEditItem = (item: ItineraryItem) => {
-    setEditingItem(item);
-    setInputVisible(true);
-  };
-
-  const handleUpdateItem = async (data: ItineraryFormData) => {
-    if (editingItem) {
-      try {
-        const updatedItem: ItineraryItem = {
-          ...editingItem,
-          ...data,
-        };
-        setItineraryItems(prev =>
-          prev.map(item => (item.id === editingItem.id ? updatedItem : item)),
-        );
-        setEditingItem(null);
-        showSnackbar(t('itinerary.item_updated'));
-      } catch (error) {
-        showSnackbar(t('itinerary.update_failed'));
-        console.error('Error updating item:', error);
-      }
-    }
-  };
-
-  const handleDeleteItem = (itemId: string) => {
-    Alert.alert(t('itinerary.delete_title'), t('itinerary.delete_message'), [
-      { text: t('itinerary.cancel'), style: 'cancel' },
+  // Default itinerary if none is passed
+  const defaultItinerary = {
+    itinerary: [
       {
-        text: t('itinerary.delete'),
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            setItineraryItems(prev => prev.filter(item => item.id !== itemId));
-            showSnackbar(t('itinerary.item_deleted'));
-          } catch (error) {
-            showSnackbar(t('itinerary.delete_failed'));
-            console.error('Error deleting item:', error);
-          }
-        },
+        day: 1,
+        activities: [
+          {
+            address: 'Unawatuna',
+            best_time_to_visit: 'Evening',
+            category: 'attraction',
+            cost_usd: 0.0,
+            description: 'Well-known for swimming and nightlife',
+            duration_hours: 4,
+            name: 'Unawatuna Beach',
+            notes: 'Beach bars and events',
+            opening_hours: 'All day',
+          },
+          {
+            address: 'Galle Fort',
+            best_time_to_visit: 'Evening',
+            category: 'nightlife',
+            cost_usd: 15.0,
+            description: 'Trendy rooftop bar with burgers and drinks',
+            duration_hours: 2,
+            name: 'Rocket Burger Rooftop',
+            notes: 'Live music',
+            opening_hours: '5pm-12am',
+          },
+          {
+            address: 'Galle Fort',
+            best_time_to_visit: 'Evening',
+            category: 'nightlife',
+            cost_usd: 22.0,
+            description: 'Modern bar with seafood and cocktails',
+            duration_hours: 2,
+            name: 'The Tuna & The Crab',
+            notes: 'Signature cocktails',
+            opening_hours: '12pm-11pm',
+          },
+        ],
       },
-    ]);
+    ],
+    metadata: {
+      num_activities: 3,
+      processing_time_ms: 60.0,
+    },
+    summary: {
+      total_cost_usd: 37.0,
+      total_distance_km: 0,
+      total_duration_hours: 8.0,
+    },
   };
 
-  const getTotalCost = () => {
-    return itineraryItems
-      .filter(item => item.price)
-      .reduce((total, item) => {
-        const price = parseInt(item.price?.replace(/[^0-9]/g, '') || '0');
-        return total + price;
-      }, 0);
-  };
+  const itineraryToShow = plannedItinerary || defaultItinerary;
 
-  const renderHeader = () => (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>{t('itinerary.my_itinerary')}</Text>
-      <View style={styles.statsContainer}>
-        <View style={styles.stat}>
-          <Text style={styles.statNumber}>{itineraryItems.length}</Text>
-          <Text style={styles.statLabel}>{t('itinerary.items')}</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.statNumber}>LKR {getTotalCost().toLocaleString()}</Text>
-          <Text style={styles.statLabel}>{t('itinerary.total_cost')}</Text>
-        </View>
-      </View>
-    </View>
-  );
-
-  const renderCategoryFilter = () => (
-    <View style={styles.categoryFilter}>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={categories}
-        keyExtractor={item => item.key}
-        renderItem={({ item }) => (
-          <Chip
-            selected={selectedCategory === item.key}
-            onPress={() => setSelectedCategory(item.key)}
-            style={styles.categoryChip}
-            mode='outlined'>
-            {item.label}
-          </Chip>
-        )}
-        contentContainerStyle={styles.categoryList}
-      />
-    </View>
-  );
-
-  const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Text style={styles.emptyTitle}>{t('itinerary.empty_title')}</Text>
-      <Text style={styles.emptySubtitle}>{t('itinerary.empty_subtitle')}</Text>
-    </View>
-  );
-
+  // Modern planned itinerary display (always)
   return (
     <View style={styles.container}>
-      {renderHeader()}
-      <Searchbar
-        placeholder={t('itinerary.search_activities')}
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        style={styles.searchbar}
-      />
-      {renderCategoryFilter()}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>My Trip</Text>
+      </View>
       <FlatList
-        data={filteredItems}
-        keyExtractor={item => item.id}
+        data={itineraryToShow.itinerary}
+        keyExtractor={item => `day-${item.day}`}
         renderItem={({ item }) => (
-          <ItineraryCard
-            item={item}
-            onPress={() => console.log('Item pressed:', item)}
-            onEdit={() => handleEditItem(item)}
-            onDelete={() => handleDeleteItem(item.id)}
-          />
+          <View style={styles.daySection}>
+            <Text style={styles.dayTitle}>Day {item.day}</Text>
+            {item.activities.map((act: any, idx: number) => (
+              <View key={idx} style={styles.activityCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.activityName}>{act.name}</Text>
+                  <Text style={styles.activityCategory}>{act.category}</Text>
+                </View>
+                <Text style={styles.activityDesc}>{act.description}</Text>
+                <View style={styles.cardDetailsRow}>
+                  <Text style={styles.activityDetail}>Address: {act.address}</Text>
+                  <Text style={styles.activityDetail}>Best Time: {act.best_time_to_visit}</Text>
+                </View>
+                <View style={styles.cardDetailsRow}>
+                  <Text style={styles.activityDetail}>Opening Hours: {act.opening_hours}</Text>
+                  <Text style={styles.activityDetail}>Duration: {act.duration_hours} hours</Text>
+                </View>
+                <Text style={styles.activityDetail}>Notes: {act.notes}</Text>
+                <Text style={styles.activityCost}>Cost: ${act.cost_usd.toFixed(2)} USD</Text>
+              </View>
+            ))}
+          </View>
         )}
-        ListEmptyComponent={renderEmptyState}
-        contentContainerStyle={styles.listContainer}
+        ListFooterComponent={
+          <View style={styles.summarySection}>
+            <Text style={styles.summaryTitle}>Summary</Text>
+            <Text style={styles.summaryText}>Total Cost: ${itineraryToShow.summary.total_cost_usd.toFixed(2)} USD</Text>
+            <Text style={styles.summaryText}>Total Duration: {itineraryToShow.summary.total_duration_hours} hours</Text>
+            <Text style={styles.summaryText}>Total Distance: {itineraryToShow.summary.total_distance_km} km</Text>
+            <Text style={styles.summaryText}>Number of Activities: {itineraryToShow.metadata.num_activities}</Text>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 40 }}
       />
-      <FAB icon='plus' style={styles.fab} onPress={() => setInputVisible(true)} />
-      <ItineraryInput
-        visible={inputVisible}
-        onDismiss={() => {
-          setInputVisible(false);
-          setEditingItem(null);
-        }}
-        onSubmit={editingItem ? handleUpdateItem : handleAddItem}
-        initialData={editingItem || undefined}
-      />
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={styles.snackbar}>
-        {snackbarMessage}
-      </Snackbar>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  categoryChip: {
-    marginHorizontal: 4,
+  container: {
+    backgroundColor: COLORS.background,
+    flex: 1,
+  },
+  header: {
+    backgroundColor: COLORS.primary,
+    padding: 24,
+    paddingTop: 48,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 4,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  headerTitle: {
+    color: COLORS.surface,
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    letterSpacing: 0.5,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 8,
+  },
+  stat: {
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: 12,
+    minWidth: 90,
+    elevation: 2,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  statNumber: {
+    color: COLORS.primary,
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  statLabel: {
+    color: COLORS.secondaryText,
+    fontSize: 13,
+    marginTop: 4,
+  },
+  searchbar: {
+    elevation: 2,
+    margin: 18,
+    borderRadius: 16,
+    backgroundColor: COLORS.surface,
   },
   categoryFilter: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   categoryList: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
   },
-  container: {
-    backgroundColor: '#f5f5f5',
-    flex: 1,
+  categoryChip: {
+    marginHorizontal: 4,
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.border,
+    borderWidth: 1,
+    borderRadius: 20,
+  },
+  categoryChipSelected: {
+    marginHorizontal: 4,
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+    borderWidth: 1,
+    borderRadius: 20,
+  },
+  categoryChipText: {
+    color: COLORS.text,
+    fontWeight: '500',
+  },
+  categoryChipTextSelected: {
+    color: COLORS.surface,
+    fontWeight: 'bold',
+  },
+  listContainer: {
+    paddingBottom: 90,
+  },
+  fab: {
+    backgroundColor: COLORS.accent,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    margin: 20,
+    borderRadius: 32,
+    elevation: 4,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
   emptyState: {
     alignItems: 'center',
@@ -283,53 +226,92 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 60,
   },
-  emptySubtitle: {
-    color: '#999',
-    fontSize: 16,
-    textAlign: 'center',
-  },
   emptyTitle: {
-    color: '#666',
-    fontSize: 20,
+    color: COLORS.text,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  fab: { backgroundColor: '#4CAF50', bottom: 0, margin: 16, position: 'absolute', right: 0 },
-  header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
+  emptySubtitle: {
+    color: COLORS.secondaryText,
+    fontSize: 16,
+    textAlign: 'center',
   },
-  headerTitle: {
-    color: 'white',
-    fontSize: 28,
+  snackbar: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 8,
+  },
+  daySection: {
+    marginTop: 18,
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  dayTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 16,
+    color: COLORS.primary,
+    marginBottom: 8,
   },
-  listContainer: {
-    paddingBottom: 80,
-  },
-  searchbar: {
+  activityCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 10,
     elevation: 2,
-    margin: 16,
   },
-  snackbar: { backgroundColor: '#4CAF50' },
-  stat: {
-    alignItems: 'center',
+  activityName: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: COLORS.text,
   },
-  statLabel: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 12,
+  activityCategory: {
+    fontSize: 13,
+    color: COLORS.accent,
+    marginBottom: 2,
+  },
+  activityDesc: {
+    fontSize: 14,
+    color: COLORS.secondaryText,
+    marginBottom: 2,
+  },
+  activityDetail: {
+    fontSize: 13,
+    color: COLORS.mediumGray,
+  },
+  activityCost: {
+    fontSize: 14,
+    color: COLORS.success,
+    fontWeight: 'bold',
     marginTop: 4,
   },
-  statNumber: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
+  summarySection: {
+    marginTop: 24,
+    marginHorizontal: 16,
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 12,
+    padding: 16,
   },
-  statsContainer: {
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginBottom: 8,
+  },
+  summaryText: {
+    fontSize: 15,
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  cardHeaderRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  cardDetailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 2,
   },
 });
 
