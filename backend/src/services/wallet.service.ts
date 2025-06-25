@@ -1,4 +1,4 @@
-import { Wallet } from '../models/Wallet'
+import { Wallet } from 'models/Wallet'
 
 export const getUserWallet = async (userId: string) => {
   let wallet = await Wallet.findOne({ userId })

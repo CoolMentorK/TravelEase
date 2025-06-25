@@ -23,11 +23,16 @@ interface ItineraryCardProps {
 export default function ItineraryCard({ item, onPress, onEdit, onDelete }: ItineraryCardProps) {
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
-      case 'attraction': return '#FF6B6B';
-      case 'restaurant': return '#4ECDC4';
-      case 'hotel': return '#45B7D1';
-      case 'transport': return '#96CEB4';
-      default: return '#A8A8A8';
+      case 'attraction':
+        return '#FF6B6B';
+      case 'restaurant':
+        return '#4ECDC4';
+      case 'hotel':
+        return '#45B7D1';
+      case 'transport':
+        return '#96CEB4';
+      default:
+        return '#A8A8A8';
     }
   };
 
@@ -40,25 +45,13 @@ export default function ItineraryCard({ item, onPress, onEdit, onDelete }: Itine
             <Text style={styles.location}>{item.location}</Text>
           </View>
           <View style={styles.actions}>
-            {onEdit && (
-              <IconButton
-                icon="pencil"
-                size={20}
-                onPress={onEdit}
-                iconColor="#666"
-              />
-            )}
+            {onEdit && <IconButton icon='pencil' size={20} onPress={onEdit} iconColor='#666' />}
             {onDelete && (
-              <IconButton
-                icon="delete"
-                size={20}
-                onPress={onDelete}
-                iconColor="#FF6B6B"
-              />
+              <IconButton icon='delete' size={20} onPress={onDelete} iconColor='#FF6B6B' />
             )}
           </View>
         </View>
-        
+
         <View style={styles.details}>
           <View style={styles.timeContainer}>
             <Text style={styles.timeLabel}>Time</Text>
@@ -69,18 +62,15 @@ export default function ItineraryCard({ item, onPress, onEdit, onDelete }: Itine
             <Text style={styles.duration}>{item.duration}</Text>
           </View>
         </View>
-        
+
         <View style={styles.footer}>
           <Chip
-            mode="outlined"
+            mode='outlined'
             textStyle={{ color: getCategoryColor(item.category) }}
-            style={[styles.categoryChip, { borderColor: getCategoryColor(item.category) }]}
-          >
+            style={[styles.categoryChip, { borderColor: getCategoryColor(item.category) }]}>
             {item.category}
           </Chip>
-          {item.price && (
-            <Text style={styles.price}>{item.price}</Text>
-          )}
+          {item.price && <Text style={styles.price}>{item.price}</Text>}
         </View>
       </Card.Content>
     </Card>
@@ -88,78 +78,78 @@ export default function ItineraryCard({ item, onPress, onEdit, onDelete }: Itine
 }
 
 const styles = StyleSheet.create({
+  actions: {
+    flexDirection: 'row',
+  },
   card: {
-    marginVertical: 8,
-    marginHorizontal: 16,
-    elevation: 3,
     borderRadius: 12,
+    elevation: 3,
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  categoryChip: {
+    backgroundColor: 'transparent',
   },
   content: {
     padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  location: {
-    fontSize: 14,
-    color: '#666',
-  },
-  actions: {
-    flexDirection: 'row',
   },
   details: {
     flexDirection: 'row',
     marginBottom: 12,
   },
-  timeContainer: {
-    marginRight: 24,
-  },
-  timeLabel: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 2,
-  },
-  time: {
+  duration: {
+    color: '#333',
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
   },
   durationContainer: {
     marginRight: 24,
   },
   durationLabel: {
-    fontSize: 12,
     color: '#999',
+    fontSize: 12,
     marginBottom: 2,
   },
-  duration: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-  },
   footer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
-  categoryChip: {
-    backgroundColor: 'transparent',
+  header: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  location: {
+    color: '#666',
+    fontSize: 14,
   },
   price: {
+    color: '#4CAF50',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4CAF50',
   },
-}); 
+  time: {
+    color: '#333',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  timeContainer: {
+    marginRight: 24,
+  },
+  timeLabel: {
+    color: '#999',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  title: {
+    color: '#333',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+});

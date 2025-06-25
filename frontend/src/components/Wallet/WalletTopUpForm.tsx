@@ -10,6 +10,20 @@ const COLORS = {
   border: '#ccc',
 } as const;
 
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 20,
+  },
+  input: {
+    borderColor: COLORS.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    fontSize: 16,
+    marginBottom: 12,
+    padding: 12,
+  },
+});
+
 const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
   const [amount, setAmount] = useState('');
 
@@ -43,19 +57,5 @@ const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  input: {
-    borderColor: COLORS.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    fontSize: 16,
-    marginBottom: 12,
-    padding: 12,
-  },
-});
 
 export default WalletTopUpForm;

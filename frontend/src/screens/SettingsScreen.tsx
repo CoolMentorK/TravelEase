@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import React, { useState } from 'react';
+import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import TranslationToggle from '../components/TranslationToggle.tsx';
 import { useTranslation } from 'react-i18next';
 
@@ -13,44 +13,44 @@ const SettingsScreen = () => {
   };
 
   const handleLogout = () => {
-    Alert.alert(t("settings.loggedOutTitle"), t("settings.loggedOutMessage"));
+    Alert.alert(t('settings.loggedOutTitle'), t('settings.loggedOutMessage'));
     // Add real logout logic here
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{t("settings.title")}</Text>
+      <Text style={styles.header}>{t('settings.title')}</Text>
 
       <View style={styles.item}>
-        <Text style={styles.label}>{t("settings.language")}</Text>
-        <TranslationToggle onChange={(lang) => i18n.changeLanguage(lang)} />
+        <Text style={styles.label}>{t('settings.language')}</Text>
+        <TranslationToggle onChange={lang => i18n.changeLanguage(lang)} />
       </View>
 
       <View style={styles.item}>
-        <Text style={styles.label}>{t("settings.darkMode")}</Text>
+        <Text style={styles.label}>{t('settings.darkMode')}</Text>
         <Switch value={darkMode} onValueChange={toggleDarkMode} />
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>{t("settings.logout")}</Text>
+        <Text style={styles.logoutText}>{t('settings.logout')}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  container: { backgroundColor: '#fff', flex: 1, padding: 20 },
+  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   item: { marginBottom: 30 },
   label: { fontSize: 16, marginBottom: 10 },
   logoutButton: {
-    marginTop: 40,
-    backgroundColor: "#e74c3c",
-    padding: 12,
+    alignItems: 'center',
+    backgroundColor: '#e74c3c',
     borderRadius: 8,
-    alignItems: "center",
+    marginTop: 40,
+    padding: 12,
   },
-  logoutText: { color: "#fff", fontWeight: "bold" },
+  logoutText: { color: '#fff', fontWeight: 'bold' },
 });
 
 export default SettingsScreen;

@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen.tsx';
 import SignupScreen from '../screens/SignupScreen.tsx';
 import ItineraryScreen from '../screens/ItineraryScreen.tsx';
 import SettingsScreen from '../screens/SettingsScreen.tsx';
+import WalletScreen from '../screens/Wallet/WalletScreen.tsx';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -12,6 +13,7 @@ export type RootStackParamList = {
   Signup:undefined;
   Itinerary: undefined;
   Settings: undefined;
+  Wallet: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +25,14 @@ export default function MainStack() {
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
       <Stack.Screen name='Home' component={HomeScreen} />
+      <Stack.Screen name='Home' component={HomeScreen} options={{ title: 'TravelEase' }} />
+      <Stack.Screen
+                name='Itinerary'
+                component={ItineraryScreen}
+                options={{ title: 'My Itinerary' }}
+            />
+            <Stack.Screen name='Settings' component={SettingsScreen} />
+            <Stack.Screen name='Wallet' component={WalletScreen} options={{ title: 'My Wallet' }} />
       <Stack.Screen 
         name='Itinerary' 
         component={ItineraryScreen}
