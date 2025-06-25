@@ -1,32 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
-import { FAB, Text, Card, Chip, IconButton, Searchbar, Snackbar } from 'react-native-paper';
+import { FAB, Text, Chip, Searchbar, Snackbar } from 'react-native-paper';
 import ItineraryCard from '../components/ItineraryCard.tsx';
 import ItineraryInput, { ItineraryFormData } from '../components/ItineraryInput.tsx';
 import { itineraryApi, ItineraryItem } from '../services/api.tsx';
+import { useTranslation } from 'react-i18next';
 
 export default function ItineraryScreen() {
+  const { t } = useTranslation();
   const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<ItineraryItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [inputVisible, setInputVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<ItineraryItem | null>(null);
   const [loading, setLoading] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const categories = ['All', 'Attraction', 'Restaurant', 'Hotel', 'Transport', 'Shopping', 'Other'];
+  const categoryKeys = ['all', 'attraction', 'restaurant', 'hotel', 'transport', 'shopping', 'other'];
+  const categories = categoryKeys.map(key => ({ key, label: t(`itinerary.${key}`) }));
 
-  // Load sample data on mount (will be replaced with API call)
   useEffect(() => {
     loadItineraryData();
   }, []);
 
+  useEffect(() => {
+    filterItems();
+  }, [searchQuery, selectedCategory, itineraryItems]);
+
   const loadItineraryData = async () => {
     setLoading(true);
     try {
-      // For now, use sample data. Later this will be an API call
       const sampleData: ItineraryItem[] = [
         {
           id: '1',
@@ -34,7 +39,7 @@ export default function ItineraryScreen() {
           location: 'Sigiriya, Central Province',
           time: '08:00 AM',
           duration: '3 hours',
-          category: 'Attraction',
+          category: 'attraction',
           price: 'LKR 5,000',
           rating: 4.8,
         },
@@ -44,7 +49,7 @@ export default function ItineraryScreen() {
           location: 'Kandy City',
           time: '12:00 PM',
           duration: '1 hour',
-          category: 'Restaurant',
+          category: 'restaurant',
           price: 'LKR 1,200',
           rating: 4.5,
         },
@@ -54,7 +59,7 @@ export default function ItineraryScreen() {
           location: 'Kandy',
           time: '02:00 PM',
           duration: '2 hours',
-          category: 'Attraction',
+          category: 'attraction',
           price: 'LKR 1,500',
           rating: 4.7,
         },
@@ -62,21 +67,16 @@ export default function ItineraryScreen() {
       setItineraryItems(sampleData);
       setFilteredItems(sampleData);
     } catch (error) {
-      showSnackbar('Failed to load itinerary data');
+      showSnackbar(t('itinerary.load_failed'));
       console.error('Error loading itinerary data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    filterItems();
-  }, [searchQuery, selectedCategory, itineraryItems]);
-
   const filterItems = () => {
     let filtered = itineraryItems;
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -84,9 +84,8 @@ export default function ItineraryScreen() {
       );
     }
 
-    // Filter by category
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(item => item.category === selectedCategory);
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(item => item.category.toLowerCase() === selectedCategory);
     }
 
     setFilteredItems(filtered);
@@ -102,16 +101,12 @@ export default function ItineraryScreen() {
       const newItem: ItineraryItem = {
         id: Date.now().toString(),
         ...data,
-        rating: Math.floor(Math.random() * 2) + 4, // Random rating for demo
+        rating: Math.floor(Math.random() * 2) + 4,
       };
-
-      // In a real app, this would be an API call
-      // await itineraryApi.addItemToItinerary(itineraryId, newItem);
-      
       setItineraryItems(prev => [...prev, newItem]);
-      showSnackbar('Item added successfully');
+      showSnackbar(t('itinerary.item_added'));
     } catch (error) {
-      showSnackbar('Failed to add item');
+      showSnackbar(t('itinerary.add_failed'));
       console.error('Error adding item:', error);
     }
   };
@@ -128,21 +123,15 @@ export default function ItineraryScreen() {
           ...editingItem,
           ...data,
         };
-
-        // In a real app, this would be an API call
-        // await itineraryApi.updateItineraryItem(itineraryId, editingItem.id, updatedItem);
-        
         setItineraryItems(prev =>
           prev.map(item =>
-            item.id === editingItem.id
-              ? updatedItem
-              : item
+            item.id === editingItem.id ? updatedItem : item
           )
         );
         setEditingItem(null);
-        showSnackbar('Item updated successfully');
+        showSnackbar(t('itinerary.item_updated'));
       } catch (error) {
-        showSnackbar('Failed to update item');
+        showSnackbar(t('itinerary.update_failed'));
         console.error('Error updating item:', error);
       }
     }
@@ -150,33 +139,25 @@ export default function ItineraryScreen() {
 
   const handleDeleteItem = (itemId: string) => {
     Alert.alert(
-      'Delete Item',
-      'Are you sure you want to delete this itinerary item?',
+      t('itinerary.delete_title'),
+      t('itinerary.delete_message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('itinerary.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('itinerary.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
-              // In a real app, this would be an API call
-              // await itineraryApi.deleteItineraryItem(itineraryId, itemId);
-              
               setItineraryItems(prev => prev.filter(item => item.id !== itemId));
-              showSnackbar('Item deleted successfully');
+              showSnackbar(t('itinerary.item_deleted'));
             } catch (error) {
-              showSnackbar('Failed to delete item');
+              showSnackbar(t('itinerary.delete_failed'));
               console.error('Error deleting item:', error);
             }
           },
         },
       ]
     );
-  };
-
-  const handleItemPress = (item: ItineraryItem) => {
-    // Navigate to item details (to be implemented)
-    console.log('Item pressed:', item);
   };
 
   const getTotalCost = () => {
@@ -190,15 +171,15 @@ export default function ItineraryScreen() {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>My Itinerary</Text>
+      <Text style={styles.headerTitle}>{t('itinerary.my_itinerary')}</Text>
       <View style={styles.statsContainer}>
         <View style={styles.stat}>
           <Text style={styles.statNumber}>{itineraryItems.length}</Text>
-          <Text style={styles.statLabel}>Items</Text>
+          <Text style={styles.statLabel}>{t('itinerary.items')}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statNumber}>LKR {getTotalCost().toLocaleString()}</Text>
-          <Text style={styles.statLabel}>Total Cost</Text>
+          <Text style={styles.statLabel}>{t('itinerary.total_cost')}</Text>
         </View>
       </View>
     </View>
@@ -210,15 +191,15 @@ export default function ItineraryScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         data={categories}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
           <Chip
-            selected={selectedCategory === item}
-            onPress={() => setSelectedCategory(item)}
+            selected={selectedCategory === item.key}
+            onPress={() => setSelectedCategory(item.key)}
             style={styles.categoryChip}
             mode="outlined"
           >
-            {item}
+            {item.label}
           </Chip>
         )}
         contentContainerStyle={styles.categoryList}
@@ -228,33 +209,28 @@ export default function ItineraryScreen() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyTitle}>No itinerary items yet</Text>
-      <Text style={styles.emptySubtitle}>
-        Tap the + button to add your first activity
-      </Text>
+      <Text style={styles.emptyTitle}>{t('itinerary.empty_title')}</Text>
+      <Text style={styles.emptySubtitle}>{t('itinerary.empty_subtitle')}</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
       {renderHeader()}
-      
       <Searchbar
-        placeholder="Search activities..."
+        placeholder={t('itinerary.search_activities')}
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchbar}
       />
-
       {renderCategoryFilter()}
-
       <FlatList
         data={filteredItems}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <ItineraryCard
             item={item}
-            onPress={() => handleItemPress(item)}
+            onPress={() => console.log('Item pressed:', item)}
             onEdit={() => handleEditItem(item)}
             onDelete={() => handleDeleteItem(item.id)}
           />
@@ -262,13 +238,11 @@ export default function ItineraryScreen() {
         ListEmptyComponent={renderEmptyState}
         contentContainerStyle={styles.listContainer}
       />
-
       <FAB
         icon="plus"
         style={styles.fab}
         onPress={() => setInputVisible(true)}
       />
-
       <ItineraryInput
         visible={inputVisible}
         onDismiss={() => {
@@ -278,7 +252,6 @@ export default function ItineraryScreen() {
         onSubmit={editingItem ? handleUpdateItem : handleAddItem}
         initialData={editingItem || undefined}
       />
-
       <Snackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
@@ -292,79 +265,70 @@ export default function ItineraryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f5f5f5' 
   },
-  header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
+  header: { 
+    backgroundColor: '#4CAF50', 
+    padding: 20, 
+    paddingTop: 40 },
+  headerTitle: { 
     fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 16,
+    fontWeight: 'bold', 
+    color: 'white', 
+    marginBottom: 16 
   },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  statsContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-around' 
   },
-  stat: {
-    alignItems: 'center',
+  stat: { 
+    alignItems: 'center'
   },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+  statNumber: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: 'white' 
   },
-  statLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 4,
+  statLabel: { 
+    fontSize: 12, 
+    color: 'rgba(255, 255, 255, 0.8)', 
+    marginTop: 4 
   },
-  searchbar: {
-    margin: 16,
-    elevation: 2,
+  searchbar: { 
+    margin: 16, 
+    elevation: 2 
   },
-  categoryFilter: {
-    marginBottom: 8,
+  categoryFilter: { 
+    marginBottom: 8 
   },
-  categoryList: {
-    paddingHorizontal: 16,
+  categoryList: { 
+    paddingHorizontal: 16 
   },
-  categoryChip: {
-    marginHorizontal: 4,
+  categoryChip: { 
+    marginHorizontal: 4 
   },
-  listContainer: {
-    paddingBottom: 80,
+  listContainer: { 
+    paddingBottom: 80 
   },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
+  emptyState: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    paddingVertical: 60 
   },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#666',
-    marginBottom: 8,
+  emptyTitle: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: '#666', 
+    marginBottom: 8 
   },
-  emptySubtitle: {
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
+  emptySubtitle: { 
+    fontSize: 16, 
+    color: '#999', 
+    textAlign: 'center' 
   },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#4CAF50',
-  },
-  snackbar: {
-    backgroundColor: '#4CAF50',
-  },
-}); 
+  fab: { position: 'absolute', margin: 16, right: 0, bottom: 0, backgroundColor: '#4CAF50' },
+  snackbar: { backgroundColor: '#4CAF50' },
+});

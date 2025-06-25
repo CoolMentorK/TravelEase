@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { TextInput, Button, Text, Chip, Portal, Modal } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 interface ItineraryInputProps {
   visible: boolean;
@@ -19,15 +20,17 @@ export interface ItineraryFormData {
   notes?: string;
 }
 
-const categories = ['Attraction', 'Restaurant', 'Hotel', 'Transport', 'Shopping', 'Other'];
+const categories = ['attraction', 'restaurant', 'hotel', 'transport', 'shopping', 'other'];
 
 export default function ItineraryInput({ visible, onDismiss, onSubmit, initialData }: ItineraryInputProps) {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState<ItineraryFormData>({
     title: initialData?.title || '',
     location: initialData?.location || '',
     time: initialData?.time || '',
     duration: initialData?.duration || '',
-    category: initialData?.category || 'Attraction',
+    category: initialData?.category || 'attraction',
     price: initialData?.price || '',
     notes: initialData?.notes || '',
   });
@@ -36,20 +39,10 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
 
   const validateForm = (): boolean => {
     const newErrors: Partial<ItineraryFormData> = {};
-    
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-    if (!formData.location.trim()) {
-      newErrors.location = 'Location is required';
-    }
-    if (!formData.time.trim()) {
-      newErrors.time = 'Time is required';
-    }
-    if (!formData.duration.trim()) {
-      newErrors.duration = 'Duration is required';
-    }
-
+    if (!formData.title.trim()) newErrors.title = t('itinerary.title_required');
+    if (!formData.location.trim()) newErrors.location = t('itinerary.location_required');
+    if (!formData.time.trim()) newErrors.time = t('itinerary.time_required');
+    if (!formData.duration.trim()) newErrors.duration = t('itinerary.duration_required');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -58,13 +51,12 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
     if (validateForm()) {
       onSubmit(formData);
       onDismiss();
-      // Reset form
       setFormData({
         title: '',
         location: '',
         time: '',
         duration: '',
-        category: 'Attraction',
+        category: 'attraction',
         price: '',
         notes: '',
       });
@@ -81,16 +73,12 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
 
   return (
     <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={styles.modal}
-      >
+      <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modal}>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.title}>Add Itinerary Item</Text>
-          
+          <Text style={styles.title}>{t('itinerary.add_item')}</Text>
+
           <TextInput
-            label="Title"
+            label={t('itinerary.title_label')}
             value={formData.title}
             onChangeText={(text) => updateFormData('title', text)}
             style={styles.input}
@@ -100,7 +88,7 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
           {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
 
           <TextInput
-            label="Location"
+            label={t('itinerary.location_label')}
             value={formData.location}
             onChangeText={(text) => updateFormData('location', text)}
             style={styles.input}
@@ -111,78 +99,70 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
 
           <View style={styles.row}>
             <TextInput
-              label="Time"
+              label={t('itinerary.time_label')}
               value={formData.time}
               onChangeText={(text) => updateFormData('time', text)}
               style={[styles.input, styles.halfInput]}
               error={!!errors.time}
               mode="outlined"
-              placeholder="09:00 AM"
+              placeholder={t('itinerary.time_placeholder')}
             />
             <TextInput
-              label="Duration"
+              label={t('itinerary.duration_label')}
               value={formData.duration}
               onChangeText={(text) => updateFormData('duration', text)}
               style={[styles.input, styles.halfInput]}
               error={!!errors.duration}
               mode="outlined"
-              placeholder="2 hours"
+              placeholder={t('itinerary.duration_placeholder')}
             />
           </View>
           {(errors.time || errors.duration) && (
             <Text style={styles.errorText}>{errors.time || errors.duration}</Text>
           )}
 
-          <Text style={styles.sectionTitle}>Category</Text>
+          <Text style={styles.sectionTitle}>{t('itinerary.category_label')}</Text>
           <View style={styles.categoryContainer}>
-            {categories.map((category) => (
+            {categories.map((categoryKey) => (
               <Chip
-                key={category}
-                selected={formData.category === category}
-                onPress={() => updateFormData('category', category)}
+                key={categoryKey}
+                selected={formData.category === categoryKey}
+                onPress={() => updateFormData('category', categoryKey)}
                 style={styles.categoryChip}
                 mode="outlined"
               >
-                {category}
+                {t(`itinerary.${categoryKey}`)}
               </Chip>
             ))}
           </View>
 
           <TextInput
-            label="Price (optional)"
+            label={t('itinerary.price_label')}
             value={formData.price}
             onChangeText={(text) => updateFormData('price', text)}
             style={styles.input}
             mode="outlined"
             keyboardType="numeric"
-            placeholder="LKR 1,500"
+            placeholder={t('itinerary.price_placeholder')}
           />
 
           <TextInput
-            label="Notes (optional)"
+            label={t('itinerary.notes_label')}
             value={formData.notes}
             onChangeText={(text) => updateFormData('notes', text)}
             style={styles.input}
             mode="outlined"
             multiline
             numberOfLines={3}
-            placeholder="Additional notes..."
+            placeholder={t('itinerary.notes_placeholder')}
           />
 
           <View style={styles.buttonContainer}>
-            <Button
-              mode="outlined"
-              onPress={onDismiss}
-              style={[styles.button, styles.cancelButton]}
-            >
-              Cancel
+            <Button mode="outlined" onPress={onDismiss} style={[styles.button, styles.cancelButton]}>
+              {t('itinerary.cancel_button')}
             </Button>
-            <Button
-              mode="contained"
-              onPress={handleSubmit}
-              style={[styles.button, styles.submitButton]}
-            >
-              Add Item
+            <Button mode="contained" onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
+              {t('itinerary.submit_button')}
             </Button>
           </View>
         </ScrollView>
@@ -255,4 +235,4 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#4CAF50',
   },
-}); 
+});
