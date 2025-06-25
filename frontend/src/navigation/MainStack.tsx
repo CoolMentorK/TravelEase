@@ -3,21 +3,35 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen.tsx';
 import LoginScreen from '../screens/LoginScreen.tsx';
 import SignupScreen from '../screens/SignupScreen.tsx';
+import ItineraryScreen from '../screens/ItineraryScreen.tsx';
+import SettingsScreen from '../screens/SettingsScreen.tsx';
 
 export type RootStackParamList = {
   Home: undefined;
   Login:undefined;
   Signup:undefined;
+  Itinerary: undefined;
+  Settings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function MainStack() {
   return (
+
     <Stack.Navigator initialRouteName='Login'>
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
       <Stack.Screen name='Home' component={HomeScreen} />
+      <Stack.Screen 
+        name='Itinerary' 
+        component={ItineraryScreen}
+        options={{ title: 'My Itinerary' }}
+      />
+      <Stack.Screen 
+        name="Settings" 
+        component={SettingsScreen} 
+      />
     </Stack.Navigator>
   );
 }
