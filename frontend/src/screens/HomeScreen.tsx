@@ -37,6 +37,18 @@ export default function HomeScreen() {
       icon: '🌟',
       action: () => console.log('Local insights coming soon'),
     },
+    {
+      title: 'Pay Vendor',
+      description: 'Scan a vendor QR or pay directly',
+      icon: '📤',
+      action: () => navigation.navigate('Payment'),
+    },
+    {
+      title: 'Transaction History',
+      description: 'View past top-ups and payments',
+      icon: '📜',
+      action: () => navigation.navigate('Transactions'),
+    },
   ];
 
   return (
@@ -83,6 +95,7 @@ export default function HomeScreen() {
           contentStyle={styles.buttonContent}>
           {t('home.goToSettings')}
         </Button>
+
       </View>
     </ScrollView>
   );
