@@ -1,32 +1,35 @@
 import jwt from 'jsonwebtoken'
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
+import logger from '../config/logger' // Import winston logger
 
 interface JwtPayload {
   id: string
 }
 
-interface AuthRequest extends Request {
+// Export AuthRequest interface
+export interface AuthRequest extends Request {
   user?: JwtPayload
 }
 
-export const protect = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({ error: 'No token provided' })
+    res.status(401).json({ error: 'No token provided' })
+    return
   }
 
   if (!process.env.JWT_SECRET) {
-    console.error('Authentication error: JWT_SECRET not found')
-    return res.status(500).json({ error: 'Server configuration error' })
+    logger.error('Authentication error: JWT_SECRET not found')
+    res.status(500).json({ error: 'Server configuration error' })
+    return
   }
 
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload
     next()
   } catch (err) {
-    const error = err instanceof Error ? err : new Error('Invalid token')
-    console.error('Authentication error:', error.message)
+    logger.error('Authentication error:', err instanceof Error ? err.message : 'Invalid token')
     res.status(401).json({ error: 'Invalid token' })
   }
 }

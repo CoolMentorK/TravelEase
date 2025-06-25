@@ -4,6 +4,17 @@ import WalletBalance from '../../components/Wallet/WalletBalance.tsx';
 import WalletTopUpForm from '../../components/Wallet/WalletTopUpForm.tsx';
 import { getBalance } from '../../services/walletService.ts';
 
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '600',
+    marginBottom: 20,
+  },
+});
+
 const WalletScreen = () => {
   const [balance, setBalance] = useState<number>(0);
 
@@ -30,16 +41,5 @@ const WalletScreen = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 20,
-  },
-});
 
 export default WalletScreen;

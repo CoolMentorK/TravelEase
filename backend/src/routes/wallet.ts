@@ -1,6 +1,6 @@
 import express from 'express'
-import { getBalance, topUp } from '../controllers/WalletController'
-import { protect } from '../middlewares/authMiddleware' // Import the middleware
+import { getBalance, topUp } from 'controllers/WalletController'
+import { protect } from 'middlewares/authMiddleware' // Import the middleware
 
 const router = express.Router()
 

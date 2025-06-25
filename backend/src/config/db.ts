@@ -1,17 +1,23 @@
 import mongoose from 'mongoose'
+import logger from './logger' // Import the winston logger
 
 export const connectDB = async (): Promise<void> => {
-  const uri = process.env.MONGO_URI
+  const uri: string | undefined = process.env.MONGO_URI
   if (!uri) {
-    throw new Error('MONGO_URI not found')
+    const error = new Error('MONGO_URI environment variable is not defined')
+    logger.error(error.message)
+    throw error
   }
 
   try {
-    await mongoose.connect(uri)
-    console.log('✅ MongoDB connected')
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s if server not found
+      retryWrites: true, // Enable retryable writes
+    })
+    logger.info('Successfully connected to MongoDB')
   } catch (err) {
-    const error = err instanceof Error ? err : new Error('DB connection failed')
-    console.error('❌ DB connection failed:', error.message)
-    throw error // Re-throw the error instead of process.exit
+    const error = err instanceof Error ? err : new Error('Database connection failed')
+    logger.error('Database connection failed:', error.message)
+    throw error
   }
 }
