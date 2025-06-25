@@ -15,15 +15,23 @@
     "isolatedModules": true,
     "types": [
       "react",
-      "react-native"
+      "react-native",
+      "@react-native-async-storage/async-storage"
     ],
     "lib": [
       "esnext"
     ]
+    // Optional: Try "node" if "nodenext" causes issues
+    // "moduleResolution": "node"
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "app.config.js",
+    "src/@types/async-storage-fix.d.ts",
+    "node_modules/@react-native-async-storage/async-storage/lib/typescript/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"

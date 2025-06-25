@@ -5,10 +5,15 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist",
-    "rootDir": "./",
+    "outDir": "./dist",
+    "rootDir": ".", // Keep as "." if server.ts is in root; change to "src" if all files are in src
     "moduleResolution": "node",
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": ".", // Optional: for cleaner imports
+    "paths": { // Optional: for cleaner imports
+      "*": ["src/*"]
+    }
   },
-  "include": ["server.ts", "src/**/*.ts"]
+  "include": ["server.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

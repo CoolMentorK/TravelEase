@@ -3,11 +3,12 @@ import bcrypt from 'bcrypt'
 
 const userSchema = new mongoose.Schema(
   {
+    name: { type: String, required: true }, // Add name field
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     walletBalance: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 userSchema.pre('save', async function () {
