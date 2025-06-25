@@ -6,6 +6,9 @@ import SignupScreen from '../screens/SignupScreen.tsx';
 import ItineraryScreen from '../screens/ItineraryScreen.tsx';
 import SettingsScreen from '../screens/SettingsScreen.tsx';
 import WalletScreen from '../screens/Wallet/WalletScreen.tsx';
+import VendorLoginScreen from "../screens/Vendor/VendorLoginScreen.tsx";
+import VendorRegisterScreen from "../screens/Vendor/VendorRegisterScreen.tsx";
+import VendorDashboardScreen from "../screens/Vendor/VendorDashboard.tsx";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -21,17 +24,24 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function MainStack() {
   return (
 
-    <Stack.Navigator initialRouteName='Login'>
+    <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: true }}>
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
       <Stack.Screen name='Home' component={HomeScreen} options={{ title: 'TravelEase' }} />
-      <Stack.Screen
-                name='Itinerary'
-                component={ItineraryScreen}
-                options={{ title: 'My Itinerary' }}
-            />
-            <Stack.Screen name='Settings' component={SettingsScreen} />
-            <Stack.Screen name='Wallet' component={WalletScreen} options={{ title: 'My Wallet' }} />
+      <Stack.Screen name='Wallet' component={WalletScreen} options={{ title: 'My Wallet' }} />
+      <Stack.Screen 
+        name='Itinerary' 
+        component={ItineraryScreen}
+        options={{ title: 'My Itinerary' }}
+      />
+      <Stack.Screen 
+        name="Settings" 
+        component={SettingsScreen} 
+      />
+       <Stack.Screen name='VendorLogin' component={VendorLoginScreen} options={{ title: 'Vendor Login' }} />
+        <Stack.Screen name='VendorRegister' component={VendorRegisterScreen} options={{ title: 'Vendor Register' }} />
+        <Stack.Screen name='VendorDashboard' component={VendorDashboardScreen} />
+
     </Stack.Navigator>
   );
 }
