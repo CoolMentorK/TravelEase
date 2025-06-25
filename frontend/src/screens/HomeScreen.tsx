@@ -4,34 +4,36 @@ import { Card, Button, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/MainStack.tsx';
+import { useTranslation } from 'react-i18next';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslation();
 
   const features = [
     {
-      title: 'Smart Itinerary',
-      description: 'AI-powered personalized travel plans',
+      title: t('home.smartItinerary'),
+      description: t('home.smartItineraryDesc'),
       icon: '🗺️',
       action: () => navigation.navigate('Itinerary'),
     },
     {
-      title: 'Digital Wallet',
-      description: 'Secure USD to LKR payments',
+      title: t('home.digitalWallet'),
+      description: t('home.digitalWalletDesc'),
       icon: '💳',
       action: () => console.log('Wallet coming soon'),
     },
     {
-      title: 'Offline Maps',
-      description: 'Navigate without internet',
+      title: t('home.offlineMaps'),
+      description: t('home.offlineMapsDesc'),
       icon: '📱',
       action: () => console.log('Offline maps coming soon'),
     },
     {
-      title: 'Local Insights',
-      description: 'Discover hidden gems',
+      title: t('home.localInsights'),
+      description: t('home.localInsightsDesc'),
       icon: '🌟',
       action: () => console.log('Local insights coming soon'),
     },
@@ -40,9 +42,9 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.welcomeText}>Welcome to</Text>
+        <Text style={styles.welcomeText}>{t('home.welcome')}</Text>
         <Text style={styles.appTitle}>TravelEase</Text>
-        <Text style={styles.subtitle}>Your smart travel companion in Sri Lanka</Text>
+        <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
       </View>
 
       <View style={styles.featuresContainer}>
@@ -51,9 +53,7 @@ export default function HomeScreen() {
             <Card.Content style={styles.cardContent}>
               <Text style={styles.featureIcon}>{feature.icon}</Text>
               <Title style={styles.featureTitle}>{feature.title}</Title>
-              <Paragraph style={styles.featureDescription}>
-                {feature.description}
-              </Paragraph>
+              <Paragraph style={styles.featureDescription}>{feature.description}</Paragraph>
             </Card.Content>
           </Card>
         ))}
@@ -66,16 +66,25 @@ export default function HomeScreen() {
           style={styles.primaryButton}
           contentStyle={styles.buttonContent}
         >
-          Plan My Trip
+          {t('home.planTrip')}
         </Button>
-        
+
         <Button
           mode="outlined"
           onPress={() => console.log('Explore coming soon')}
           style={styles.secondaryButton}
           contentStyle={styles.buttonContent}
         >
-          Explore Destinations
+          {t('home.exploreDestinations')}
+        </Button>
+
+        <Button
+          mode="text"
+          onPress={() => navigation.navigate('Settings')}
+          style={styles.settingsButton}
+          contentStyle={styles.buttonContent}
+        >
+          {t('home.goToSettings')}
         </Button>
       </View>
     </ScrollView>
@@ -151,5 +160,9 @@ const styles = StyleSheet.create({
   },
   buttonContent: {
     paddingVertical: 8,
+  },
+  settingsButton: {
+  marginTop: 8,
+  alignSelf: 'center',
   },
 });

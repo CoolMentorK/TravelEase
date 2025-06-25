@@ -1,0 +1,25 @@
+{
+  "home": {
+    "welcome": "Welcome to",
+    "subtitle": "Your smart travel companion in Sri Lanka",
+    "smartItinerary": "Smart Itinerary",
+    "smartItineraryDesc": "AI-powered personalized travel plans",
+    "digitalWallet": "Digital Wallet",
+    "digitalWalletDesc": "Secure USD to LKR payments",
+    "offlineMaps": "Offline Maps",
+    "offlineMapsDesc": "Navigate without internet",
+    "localInsights": "Local Insights",
+    "localInsightsDesc": "Discover hidden gems",
+    "planTrip": "Plan My Trip",
+    "exploreDestinations": "Explore Destinations",
+    "goToSettings": "Go to Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "App Language",
+    "darkMode": "Dark Mode",
+    "logout": "Log Out",
+    "loggedOutTitle": "Logged out",
+    "loggedOutMessage": "You have been logged out."
+  }
+}
