@@ -30,3 +30,35 @@ export const topUp = async (req: AuthRequest, res: Response, next: NextFunction)
     next(err)
   }
 }
+
+export const payVendor = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const { vendorId, amount } = req.body;
+
+    if (!vendorId || !amount || amount <= 0) {
+      return res.status(400).json({ error: 'Invalid payment request' });
+    }
+
+    // Use the service method that handles deduction and transaction recording
+    await WalletService.deductFromWallet(userId, amount, vendorId);
+
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getTransactionHistory = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const transactions = await WalletService.getUserTransactions(userId);
+    res.json({ transactions });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not fetch transactions' });
+  }
+};
