@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { FAB, Text, Chip, Searchbar, Snackbar } from 'react-native-paper';
 import ItineraryCard from '../components/ItineraryCard.tsx';
-import ItineraryInput, { ItineraryFormData } from '../components/ItineraryInput.tsx';
-import { itineraryApi, ItineraryItem } from '../services/api.tsx';
+import type { ItineraryFormData } from '../components/ItineraryInput.tsx';
+import ItineraryInput from '../components/ItineraryInput.tsx';
+import type { ItineraryItem } from '../services/api.tsx';
+import { itineraryApi } from '../services/api.tsx';
 import { useTranslation } from 'react-i18next';
 
 export default function ItineraryScreen() {
@@ -18,7 +20,15 @@ export default function ItineraryScreen() {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const categoryKeys = ['all', 'attraction', 'restaurant', 'hotel', 'transport', 'shopping', 'other'];
+  const categoryKeys = [
+    'all',
+    'attraction',
+    'restaurant',
+    'hotel',
+    'transport',
+    'shopping',
+    'other',
+  ];
   const categories = categoryKeys.map(key => ({ key, label: t(`itinerary.${key}`) }));
 
   useEffect(() => {
@@ -78,9 +88,10 @@ export default function ItineraryScreen() {
     let filtered = itineraryItems;
 
     if (searchQuery) {
-      filtered = filtered.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.location.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        item =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.location.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -124,9 +135,7 @@ export default function ItineraryScreen() {
           ...data,
         };
         setItineraryItems(prev =>
-          prev.map(item =>
-            item.id === editingItem.id ? updatedItem : item
-          )
+          prev.map(item => (item.id === editingItem.id ? updatedItem : item)),
         );
         setEditingItem(null);
         showSnackbar(t('itinerary.item_updated'));
@@ -138,26 +147,22 @@ export default function ItineraryScreen() {
   };
 
   const handleDeleteItem = (itemId: string) => {
-    Alert.alert(
-      t('itinerary.delete_title'),
-      t('itinerary.delete_message'),
-      [
-        { text: t('itinerary.cancel'), style: 'cancel' },
-        {
-          text: t('itinerary.delete'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setItineraryItems(prev => prev.filter(item => item.id !== itemId));
-              showSnackbar(t('itinerary.item_deleted'));
-            } catch (error) {
-              showSnackbar(t('itinerary.delete_failed'));
-              console.error('Error deleting item:', error);
-            }
-          },
+    Alert.alert(t('itinerary.delete_title'), t('itinerary.delete_message'), [
+      { text: t('itinerary.cancel'), style: 'cancel' },
+      {
+        text: t('itinerary.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setItineraryItems(prev => prev.filter(item => item.id !== itemId));
+            showSnackbar(t('itinerary.item_deleted'));
+          } catch (error) {
+            showSnackbar(t('itinerary.delete_failed'));
+            console.error('Error deleting item:', error);
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const getTotalCost = () => {
@@ -191,14 +196,13 @@ export default function ItineraryScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         data={categories}
-        keyExtractor={(item) => item.key}
+        keyExtractor={item => item.key}
         renderItem={({ item }) => (
           <Chip
             selected={selectedCategory === item.key}
             onPress={() => setSelectedCategory(item.key)}
             style={styles.categoryChip}
-            mode="outlined"
-          >
+            mode='outlined'>
             {item.label}
           </Chip>
         )}
@@ -226,7 +230,7 @@ export default function ItineraryScreen() {
       {renderCategoryFilter()}
       <FlatList
         data={filteredItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <ItineraryCard
             item={item}
@@ -238,11 +242,7 @@ export default function ItineraryScreen() {
         ListEmptyComponent={renderEmptyState}
         contentContainerStyle={styles.listContainer}
       />
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => setInputVisible(true)}
-      />
+      <FAB icon='plus' style={styles.fab} onPress={() => setInputVisible(true)} />
       <ItineraryInput
         visible={inputVisible}
         onDismiss={() => {
@@ -256,8 +256,7 @@ export default function ItineraryScreen() {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}
-        style={styles.snackbar}
-      >
+        style={styles.snackbar}>
         {snackbarMessage}
       </Snackbar>
     </View>
@@ -265,70 +264,71 @@ export default function ItineraryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#f5f5f5' 
+  categoryChip: {
+    marginHorizontal: 4,
   },
-  header: { 
-    backgroundColor: '#4CAF50', 
-    padding: 20, 
-    paddingTop: 40 },
-  headerTitle: { 
+  categoryFilter: {
+    marginBottom: 8,
+  },
+  categoryList: {
+    paddingHorizontal: 16,
+  },
+  container: {
+    backgroundColor: '#f5f5f5',
+    flex: 1,
+  },
+  emptyState: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptySubtitle: {
+    color: '#999',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  emptyTitle: {
+    color: '#666',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  fab: { backgroundColor: '#4CAF50', bottom: 0, margin: 16, position: 'absolute', right: 0 },
+  header: {
+    backgroundColor: '#4CAF50',
+    padding: 20,
+    paddingTop: 40,
+  },
+  headerTitle: {
+    color: 'white',
     fontSize: 28,
-    fontWeight: 'bold', 
-    color: 'white', 
-    marginBottom: 16 
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
-  statsContainer: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-around' 
+  listContainer: {
+    paddingBottom: 80,
   },
-  stat: { 
-    alignItems: 'center'
+  searchbar: {
+    elevation: 2,
+    margin: 16,
   },
-  statNumber: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    color: 'white' 
-  },
-  statLabel: { 
-    fontSize: 12, 
-    color: 'rgba(255, 255, 255, 0.8)', 
-    marginTop: 4 
-  },
-  searchbar: { 
-    margin: 16, 
-    elevation: 2 
-  },
-  categoryFilter: { 
-    marginBottom: 8 
-  },
-  categoryList: { 
-    paddingHorizontal: 16 
-  },
-  categoryChip: { 
-    marginHorizontal: 4 
-  },
-  listContainer: { 
-    paddingBottom: 80 
-  },
-  emptyState: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    paddingVertical: 60 
-  },
-  emptyTitle: { 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    color: '#666', 
-    marginBottom: 8 
-  },
-  emptySubtitle: { 
-    fontSize: 16, 
-    color: '#999', 
-    textAlign: 'center' 
-  },
-  fab: { position: 'absolute', margin: 16, right: 0, bottom: 0, backgroundColor: '#4CAF50' },
   snackbar: { backgroundColor: '#4CAF50' },
+  stat: {
+    alignItems: 'center',
+  },
+  statLabel: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  statNumber: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
 });

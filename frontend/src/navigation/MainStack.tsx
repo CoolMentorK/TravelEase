@@ -15,20 +15,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function MainStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name='Home' 
-        component={HomeScreen}
-        options={{ title: 'TravelEase' }}
-      />
-      <Stack.Screen 
-        name='Itinerary' 
+      <Stack.Screen name='Home' component={HomeScreen} options={{ title: 'TravelEase' }} />
+      <Stack.Screen
+        name='Itinerary'
         component={ItineraryScreen}
         options={{ title: 'My Itinerary' }}
       />
-      <Stack.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-      />
+      <Stack.Screen name='Settings' component={SettingsScreen} />
     </Stack.Navigator>
   );
 }

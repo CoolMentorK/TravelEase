@@ -22,7 +22,12 @@ export interface ItineraryFormData {
 
 const categories = ['attraction', 'restaurant', 'hotel', 'transport', 'shopping', 'other'];
 
-export default function ItineraryInput({ visible, onDismiss, onSubmit, initialData }: ItineraryInputProps) {
+export default function ItineraryInput({
+  visible,
+  onDismiss,
+  onSubmit,
+  initialData,
+}: ItineraryInputProps) {
   const { t } = useTranslation();
 
   const [formData, setFormData] = useState<ItineraryFormData>({
@@ -80,20 +85,20 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
           <TextInput
             label={t('itinerary.title_label')}
             value={formData.title}
-            onChangeText={(text) => updateFormData('title', text)}
+            onChangeText={text => updateFormData('title', text)}
             style={styles.input}
             error={!!errors.title}
-            mode="outlined"
+            mode='outlined'
           />
           {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
 
           <TextInput
             label={t('itinerary.location_label')}
             value={formData.location}
-            onChangeText={(text) => updateFormData('location', text)}
+            onChangeText={text => updateFormData('location', text)}
             style={styles.input}
             error={!!errors.location}
-            mode="outlined"
+            mode='outlined'
           />
           {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
 
@@ -101,19 +106,19 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
             <TextInput
               label={t('itinerary.time_label')}
               value={formData.time}
-              onChangeText={(text) => updateFormData('time', text)}
+              onChangeText={text => updateFormData('time', text)}
               style={[styles.input, styles.halfInput]}
               error={!!errors.time}
-              mode="outlined"
+              mode='outlined'
               placeholder={t('itinerary.time_placeholder')}
             />
             <TextInput
               label={t('itinerary.duration_label')}
               value={formData.duration}
-              onChangeText={(text) => updateFormData('duration', text)}
+              onChangeText={text => updateFormData('duration', text)}
               style={[styles.input, styles.halfInput]}
               error={!!errors.duration}
-              mode="outlined"
+              mode='outlined'
               placeholder={t('itinerary.duration_placeholder')}
             />
           </View>
@@ -123,14 +128,13 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
 
           <Text style={styles.sectionTitle}>{t('itinerary.category_label')}</Text>
           <View style={styles.categoryContainer}>
-            {categories.map((categoryKey) => (
+            {categories.map(categoryKey => (
               <Chip
                 key={categoryKey}
                 selected={formData.category === categoryKey}
                 onPress={() => updateFormData('category', categoryKey)}
                 style={styles.categoryChip}
-                mode="outlined"
-              >
+                mode='outlined'>
                 {t(`itinerary.${categoryKey}`)}
               </Chip>
             ))}
@@ -139,29 +143,35 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
           <TextInput
             label={t('itinerary.price_label')}
             value={formData.price}
-            onChangeText={(text) => updateFormData('price', text)}
+            onChangeText={text => updateFormData('price', text)}
             style={styles.input}
-            mode="outlined"
-            keyboardType="numeric"
+            mode='outlined'
+            keyboardType='numeric'
             placeholder={t('itinerary.price_placeholder')}
           />
 
           <TextInput
             label={t('itinerary.notes_label')}
             value={formData.notes}
-            onChangeText={(text) => updateFormData('notes', text)}
+            onChangeText={text => updateFormData('notes', text)}
             style={styles.input}
-            mode="outlined"
+            mode='outlined'
             multiline
             numberOfLines={3}
             placeholder={t('itinerary.notes_placeholder')}
           />
 
           <View style={styles.buttonContainer}>
-            <Button mode="outlined" onPress={onDismiss} style={[styles.button, styles.cancelButton]}>
+            <Button
+              mode='outlined'
+              onPress={onDismiss}
+              style={[styles.button, styles.cancelButton]}>
               {t('itinerary.cancel_button')}
             </Button>
-            <Button mode="contained" onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
+            <Button
+              mode='contained'
+              onPress={handleSubmit}
+              style={[styles.button, styles.submitButton]}>
               {t('itinerary.submit_button')}
             </Button>
           </View>
@@ -172,47 +182,25 @@ export default function ItineraryInput({ visible, onDismiss, onSubmit, initialDa
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    backgroundColor: 'white',
-    margin: 20,
-    borderRadius: 12,
-    maxHeight: '80%',
-  },
-  scrollView: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-  input: {
-    marginBottom: 8,
-  },
-  halfInput: {
+  button: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 8,
   },
-  row: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 20,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 16,
-    marginBottom: 8,
-    color: '#333',
+  cancelButton: {
+    borderColor: '#666',
+  },
+  categoryChip: {
+    margin: 4,
   },
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 16,
-  },
-  categoryChip: {
-    margin: 4,
   },
   errorText: {
     color: '#FF6B6B',
@@ -220,19 +208,41 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: 4,
   },
-  buttonContainer: {
+  halfInput: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  input: {
+    marginBottom: 8,
+  },
+  modal: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    margin: 20,
+    maxHeight: '80%',
+  },
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
   },
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
+  scrollView: {
+    padding: 20,
   },
-  cancelButton: {
-    borderColor: '#666',
+  sectionTitle: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    marginTop: 16,
   },
   submitButton: {
     backgroundColor: '#4CAF50',
+  },
+  title: {
+    color: '#333',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
 });

@@ -17,9 +17,9 @@ const TranslationToggle: React.FC<Props> = ({ onChange }) => {
   return (
     <View>
       <Picker selectedValue={lang} onValueChange={handleChange}>
-        <Picker.Item label="English" value="en" />
-        <Picker.Item label="සිංහල" value="si" />
-        <Picker.Item label="தமிழ்" value="ta" />
+        <Picker.Item label='English' value='en' />
+        <Picker.Item label='සිංහල' value='si' />
+        <Picker.Item label='தமிழ்' value='ta' />
       </Picker>
     </View>
   );
