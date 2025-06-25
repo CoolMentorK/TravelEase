@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/MainStack.tsx';
 import { useTranslation } from 'react-i18next';
 import { COLORS } from '../constants/colors.ts';
-import PlanTripForm, { PlanTripFormData } from '../components/PlanTripForm';
+import PlanTripForm, { PlanTripFormData } from '../components/PlanTripForm.tsx';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -46,13 +46,13 @@ export default function HomeScreen() {
       action: () => console.log('Local insights coming soon'),
     },
     {
-      title: t('home.payVendor'),
+      title: t('Pay Vendor'),
       description: t('home.payVendorDesc', { defaultValue: 'Scan a vendor QR or pay directly' }),
       icon: '📤',
       action: () => navigation.navigate('Payment'),
     },
     {
-      title: t('home.transactionHistory'),
+      title: t('Transaction History'),
       description: t('home.transactionHistoryDesc', { defaultValue: 'View past top-ups and payments' }),
       icon: '📜',
       action: () => navigation.navigate('Transactions'),
