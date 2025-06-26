@@ -1,21 +1,27 @@
-import type { Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import type { AuthRequest } from 'middlewares/authMiddleware'
 import * as WalletService from '../services/wallet.service'
 
+// GET /wallet/balance
 export const getBalance = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
+  const authReq = req as AuthRequest
+
   try {
-    const wallet = await WalletService.getUserWallet(req.user!.id) // Assert user exists
+    const wallet = await WalletService.getUserWallet(authReq.user!.id)
     res.json({ balance: wallet.balanceLKR })
-  } catch (err) {
-    next(err) // Pass error to Express error handler
+  } catch (error) {
+    next(error)
   }
 }
 
-export const topUp = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+// POST /wallet/top-up
+export const topUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const authReq = req as AuthRequest
+
   try {
     const { amount } = req.body
 
@@ -24,41 +30,44 @@ export const topUp = async (req: AuthRequest, res: Response, next: NextFunction)
       return
     }
 
-    const wallet = await WalletService.topUpUserWallet(req.user!.id, amount)
+    const wallet = await WalletService.topUpUserWallet(authReq.user!.id, amount)
     res.json({ balance: wallet.balanceLKR })
-  } catch (err) {
-    next(err)
+  } catch (error) {
+    next(error)
   }
 }
 
-export const payVendor = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+// POST /wallet/pay
+export const payVendor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const authReq = req as AuthRequest
+
   try {
-    const userId = req.user!.id
     const { vendorId, amount } = req.body
 
     if (!vendorId || !amount || amount <= 0) {
-      return res.status(400).json({ error: 'Invalid payment request' })
+      res.status(400).json({ error: 'Invalid payment request' })
+      return
     }
 
-    // Use the service method that handles deduction and transaction recording
-    await WalletService.deductFromWallet(userId, amount, vendorId)
-
+    await WalletService.deductFromWallet(authReq.user!.id, amount, vendorId)
     res.json({ success: true })
-  } catch (err) {
-    next(err)
+  } catch (error) {
+    next(error)
   }
 }
 
-export const getTransactionHistory = async (req: AuthRequest, res: Response) => {
+// GET /wallet/transactions
+export const getTransactionHistory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  const authReq = req as AuthRequest
+
   try {
-    const userId = req.user!.id
-    const transactions = await WalletService.getUserTransactions(userId)
+    const transactions = await WalletService.getUserTransactions(authReq.user!.id)
     res.json({ transactions })
-  } catch (err) {
-    res.status(500).json({ error: 'Could not fetch transactions' })
+  } catch (error) {
+    next(error)
   }
 }

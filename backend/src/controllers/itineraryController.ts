@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
-import type { IItineraryItem } from '../models/Itinerary.js'
-import Itinerary, { IItinerary } from '../models/Itinerary.js'
+import type { IItineraryItem } from '../models/Itinerary'
+import Itinerary from '../models/Itinerary.js'
 
 // Get all itineraries for a user
 export const getUserItineraries = async (req: Request, res: Response): Promise<void> => {

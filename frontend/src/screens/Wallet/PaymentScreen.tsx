@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { sendPayment } from '../../services/walletService.ts';
+import { COLORS } from '../../constants/colors.ts';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: COLORS.borderGray,
     borderRadius: 8,
     borderWidth: 1,
     fontSize: 16,
@@ -37,8 +38,9 @@ const PaymentScreen = () => {
       Alert.alert('Success', 'Payment sent successfully!');
       setVendorId('');
       setAmount('');
-    } catch (err) {
-      Alert.alert('Error', 'Payment failed.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Payment failed.';
+      Alert.alert('Error', message);
     }
   };
 
@@ -51,6 +53,7 @@ const PaymentScreen = () => {
         placeholder='Vendor ID'
         value={vendorId}
         onChangeText={setVendorId}
+        accessibilityLabel='Vendor ID input'
       />
 
       <TextInput
@@ -59,9 +62,14 @@ const PaymentScreen = () => {
         keyboardType='numeric'
         value={amount}
         onChangeText={setAmount}
+        accessibilityLabel='Amount input'
       />
 
-      <Button title='Send Payment' onPress={handlePayment} />
+      <Button
+        title='Send Payment'
+        onPress={handlePayment}
+        accessibilityLabel='Send Payment button'
+      />
     </View>
   );
 };

@@ -8,16 +8,167 @@ import {
   Alert,
   useColorScheme,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons.js';
 import getEnvVars from '../../config.tsx';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/MainStack.tsx';
+import { COLORS } from '../constants/colors.ts';
 
 const { API_BASE_URL } = getEnvVars();
 
-export default function SignupScreen({ navigation }: any) {
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    borderRadius: 12,
+    marginTop: 10,
+    padding: 16,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    width: '100%',
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+  },
+  containerDark: {
+    backgroundColor: COLORS.darkBackground, // #121212
+  },
+  containerLight: {
+    backgroundColor: COLORS.lightBackground, // #F5F5F5
+  },
+  input: {
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 16,
+    marginBottom: 16,
+    padding: 14,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    width: '100%',
+  },
+  inputDark: {
+    backgroundColor: COLORS.darkSurface, // #2A2A2A
+    borderColor: COLORS.greenAccent, // #4FB993
+  },
+  inputLight: {
+    backgroundColor: COLORS.white, // #FFFFFF
+    borderColor: COLORS.borderLight, // #DDD
+  },
+  linkText: {
+    fontSize: 14,
+  },
+  linkTextDark: {
+    color: COLORS.greenAccent, // #4FB993
+  },
+  linkTextLight: {
+    color: COLORS.primary, // #005F8D
+  },
+  linkWrapper: {
+    alignItems: 'center',
+    marginTop: 20,
+    padding: 8,
+  },
+  logo: {
+    fontSize: 36,
+    fontWeight: '700',
+    marginBottom: 100,
+    textAlign: 'center',
+    textDecorationColor: COLORS.accent, // #F2C94C
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+  },
+  logoDark: {
+    color: COLORS.blueDark, // #007AB8
+  },
+  logoLight: {
+    color: COLORS.primary, // #005F8D
+  },
+  orText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginVertical: 20,
+    textAlign: 'center',
+  },
+  orTextDark: {
+    color: COLORS.categoryDefault, // #A0A0A0
+  },
+  orTextLight: {
+    color: COLORS.textSecondary, // #888
+  },
+  signupButtonDark: {
+    backgroundColor: COLORS.orangeDark, // #FFAA5A
+  },
+  signupButtonLight: {
+    backgroundColor: COLORS.orangeAccent, // #F2994A
+  },
+  socialButton: {
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    height: 48,
+    justifyContent: 'center',
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    width: 48,
+  },
+  socialButtonApple: {
+    backgroundColor: COLORS.black, // #000000
+    borderColor: COLORS.black, // #000000
+  },
+  socialButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 16,
+    width: '60%',
+  },
+  socialButtonGoogleDark: {
+    backgroundColor: COLORS.darkSurface, // #2A2A2A
+    borderColor: COLORS.greenAccent, // #4FB993
+  },
+  socialButtonGoogleLight: {
+    backgroundColor: COLORS.white, // #FFFFFF
+    borderColor: COLORS.black, // #000000
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '600',
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+  titleDark: {
+    color: COLORS.grayLight, // #E0E0E0
+  },
+  titleLight: {
+    color: COLORS.primary, // #005F8D
+  },
+});
+
+export default function SignupScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const isDarkMode = useColorScheme() === 'dark';
+  const navigation = useNavigation<NavigationProp>();
 
   const handleSignup = async () => {
     try {
@@ -28,12 +179,16 @@ export default function SignupScreen({ navigation }: any) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Signup failed');
+      if (!res.ok) {
+        Alert.alert('Signup Failed', data.message || 'Signup failed');
+        return;
+      }
 
       Alert.alert('Account Created', `Welcome ${data.user.name}`);
       navigation.navigate('Home');
-    } catch (err: any) {
-      Alert.alert('Signup Failed', err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      Alert.alert('Signup Failed', message);
     }
   };
 
@@ -46,95 +201,68 @@ export default function SignupScreen({ navigation }: any) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#F5F5F5' }]}>
+    <View style={[styles.container, isDarkMode ? styles.containerDark : styles.containerLight]}>
       <Text
-        style={[styles.logo, { color: isDarkMode ? '#007AB8' : '#005F8D' }]}
+        style={[styles.logo, isDarkMode ? styles.logoDark : styles.logoLight]}
         accessibilityLabel='TravelEase logo'>
         TravelEase
       </Text>
 
-      <Text style={[styles.title, { color: isDarkMode ? '#E0E0E0' : '#005F8D' }]}>
+      <Text style={[styles.title, isDarkMode ? styles.titleDark : styles.titleLight]}>
         Create Account
       </Text>
 
       <TextInput
         placeholder='Name'
-        placeholderTextColor={isDarkMode ? '#A0A0A0' : '#888'}
-        style={[
-          styles.input,
-          {
-            backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
-            borderColor: isDarkMode ? '#4FB993' : '#DDD',
-          },
-        ]}
+        placeholderTextColor={isDarkMode ? COLORS.categoryDefault : COLORS.textSecondary}
+        style={[styles.input, isDarkMode ? styles.inputDark : styles.inputLight]}
         onChangeText={setName}
         accessibilityLabel='Name input'
       />
       <TextInput
         placeholder='Email'
-        placeholderTextColor={isDarkMode ? '#A0A0A0' : '#888'}
-        style={[
-          styles.input,
-          {
-            backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
-            borderColor: isDarkMode ? '#4FB993' : '#DDD',
-          },
-        ]}
+        placeholderTextColor={isDarkMode ? COLORS.categoryDefault : COLORS.textSecondary}
+        style={[styles.input, isDarkMode ? styles.inputDark : styles.inputLight]}
         onChangeText={setEmail}
         accessibilityLabel='Email input'
       />
       <TextInput
         placeholder='Password'
-        placeholderTextColor={isDarkMode ? '#A0A0A0' : '#888'}
+        placeholderTextColor={isDarkMode ? COLORS.categoryDefault : COLORS.textSecondary}
         secureTextEntry
-        style={[
-          styles.input,
-          {
-            backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
-            borderColor: isDarkMode ? '#4FB993' : '#DDD',
-          },
-        ]}
+        style={[styles.input, isDarkMode ? styles.inputDark : styles.inputLight]}
         onChangeText={setPassword}
         accessibilityLabel='Password input'
       />
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: isDarkMode ? '#FFAA5A' : '#F2994A' }]}
+        style={[styles.button, isDarkMode ? styles.signupButtonDark : styles.signupButtonLight]}
         onPress={handleSignup}
         accessibilityRole='button'
         accessibilityLabel='Sign Up button'>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
-      <Text style={[styles.orText, { color: isDarkMode ? '#A0A0A0' : '#888' }]}>OR</Text>
+      <Text style={[styles.orText, isDarkMode ? styles.orTextDark : styles.orTextLight]}>OR</Text>
 
       <View style={styles.socialButtonContainer}>
         <TouchableOpacity
           style={[
             styles.socialButton,
-            {
-              backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
-              borderColor: isDarkMode ? '#4FB993' : '#000000',
-            },
+            isDarkMode ? styles.socialButtonGoogleDark : styles.socialButtonGoogleLight,
           ]}
           onPress={handleGoogleLogin}
           accessibilityRole='button'
           accessibilityLabel='Sign up with Google'>
-          <Icon name='google' size={24} color={isDarkMode ? '#E0E0E0' : '#000000'} />
+          <Icon name='google' size={24} color={isDarkMode ? COLORS.grayLight : COLORS.black} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles.socialButton,
-            {
-              backgroundColor: '#000000',
-              borderColor: isDarkMode ? '#4FB993' : '#000000',
-            },
-          ]}
+          style={[styles.socialButton, styles.socialButtonApple]}
           onPress={handleAppleLogin}
           accessibilityRole='button'
           accessibilityLabel='Sign up with Apple'>
-          <Icon name='apple' size={24} color='#FFFFFF' />
+          <Icon name='apple' size={24} color={COLORS.white} />
         </TouchableOpacity>
       </View>
 
@@ -143,103 +271,10 @@ export default function SignupScreen({ navigation }: any) {
         style={styles.linkWrapper}
         accessibilityRole='button'
         accessibilityLabel='Log In link'>
-        <Text style={[styles.linkText, { color: isDarkMode ? '#4FB993' : '#005F8D' }]}>
+        <Text style={[styles.linkText, isDarkMode ? styles.linkTextDark : styles.linkTextLight]}>
           Already have an account? Log In
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 10,
-    width: '100%',
-    // Ensure button stands out with slight elevation
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 30, // Adjusted for logo placement
-    // Subtle cultural motif: faint shadow for depth
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
-  input: {
-    fontSize: 16,
-    padding: 14,
-    marginBottom: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    width: '100%',
-    // Add subtle cultural accent with Tea Green border in dark mode
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  linkText: {
-    fontSize: 14,
-  },
-  linkWrapper: {
-    alignItems: 'center',
-    marginTop: 20,
-    padding: 8, // Larger tap target
-  },
-  logo: {
-    fontSize: 36,
-    fontWeight: '700',
-    marginBottom: 100,
-    textAlign: 'center',
-    // Subtle saffron underline for cultural accent
-    textDecorationLine: 'underline',
-    textDecorationColor: '#F2C94C',
-    textDecorationStyle: 'solid',
-  },
-  orText: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginVertical: 20,
-    textAlign: 'center',
-  },
-  socialButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // Subtle cultural accent with Tea Green border in dark mode
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  socialButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16,
-    width: '60%',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-});

@@ -1,4 +1,4 @@
-const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const translateText = async (
   text: string,

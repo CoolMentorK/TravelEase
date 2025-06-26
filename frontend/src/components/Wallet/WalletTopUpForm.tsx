@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, StyleSheet, Alert, Text } from 'react-native';
+import { Button } from 'react-native-paper';
 import { topUpWallet } from '../../services/walletService.ts';
 import { convertUSDToLKR } from '../../utils/currency.ts';
+import { COLORS } from '../../constants/colors.ts';
 
 interface Props {
   onTopUpSuccess: () => void;
 }
-
-const COLORS = {
-  border: '#ccc',
-} as const;
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
   },
   input: {
-    borderColor: COLORS.border,
+    borderColor: COLORS.borderGray, // Use COLORS.borderGray from colors.ts
     borderRadius: 8,
     borderWidth: 1,
     fontSize: 16,
@@ -27,11 +25,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   rateLabel: {
-    color: '#555',
+    color: COLORS.mediumGray, // Use COLORS.mediumGray for #555
     fontSize: 14,
   },
   rateValue: {
-    color: '#2e7d32',
+    color: COLORS.success, // Use COLORS.success for #2e7d32
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -68,14 +66,13 @@ const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
         value={amount}
         onChangeText={setAmount}
       />
-
-      {/* 👇 Conversion Display */}
       <View style={styles.rateContainer}>
         <Text style={styles.rateLabel}>You’ll receive:</Text>
         <Text style={styles.rateValue}>LKR {converted.toFixed(2)}</Text>
       </View>
-
-      <Button title='Top Up Wallet' onPress={handleTopUp} />
+      <Button mode='contained' onPress={handleTopUp}>
+        <Text>Top Up Wallet</Text>
+      </Button>
     </View>
   );
 };

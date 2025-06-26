@@ -1,6 +1,6 @@
 import express from 'express'
-import vendorRoutes from 'routes/VendorRoutes'
-import vendorDashboardRoutes from 'routes/vendorDashboardRoutes'
+import vendorRoutes from 'src/routes/VendorRoutes'
+import vendorDashboardRoutes from 'src/routes/vendorDashboardRoutes'
 import authRoutes from './auth'
 import walletRoutes from './wallet' // import wallet routes
 

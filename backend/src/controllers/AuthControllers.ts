@@ -2,15 +2,17 @@ import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 
-// Define AuthRequest to match the protect middleware
+// Authenticated request interface
 interface AuthRequest extends Request {
   user?: { id: string }
 }
 
+// Generate JWT
 const generateToken = (id: string): string => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, { expiresIn: '7d' })
 }
 
+// Register user
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { name, email, password } = req.body
 
@@ -21,11 +23,16 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       return
     }
 
-    const user = await User.create({ name, email, password }) // Include name
+    const user = await User.create({ name, email, password })
     const token = generateToken(user._id.toString())
 
     res.status(201).json({
-      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        walletBalance: user.walletBalance,
+      },
       token,
     })
   } catch (err) {
@@ -33,6 +40,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
+// Login user
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { email, password } = req.body
 
@@ -43,10 +51,15 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       return
     }
 
-    const token = generateToken(user._id) // No .toString() needed if _id is string
+    const token = generateToken(user._id.toString())
 
     res.json({
-      user: { id: user._id, name: user.name, email: user.email, walletBalance: user.walletBalance }, // Add name to response
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        walletBalance: user.walletBalance,
+      },
       token,
     })
   } catch (err) {
@@ -54,6 +67,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
+// Get user profile
 export const getProfile = async (
   req: AuthRequest,
   res: Response,
@@ -67,7 +81,7 @@ export const getProfile = async (
     }
 
     res.json({
-      id: user._id,
+      id: user._id.toString(),
       name: user.name,
       email: user.email,
       walletBalance: user.walletBalance,

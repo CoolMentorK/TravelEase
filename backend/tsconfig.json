@@ -11,7 +11,9 @@
     "types": ["node"],
     "baseUrl": ".", // Optional: for cleaner imports
     "paths": { // Optional: for cleaner imports
-      "*": ["src/*"]
+      "controllers/*": ["src/controllers/*"],
+      "middlewares/*": ["src/middlewares/*"],
+      "services/*": ["src/services/*"]
     }
   },
   "include": ["server.ts", "src/**/*.ts", ".eslintrc.cjs"],
