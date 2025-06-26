@@ -31,7 +31,10 @@ export default function PlanTripForm({ onPlanTrip, onCancel }: PlanTripFormProps
     setError('');
     onPlanTrip({
       location,
-      interests: interests.split(',').map(s => s.trim()).filter(Boolean),
+      interests: interests
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
       days: parseInt(days, 10),
       budget: parseFloat(budget),
       suitable_for: suitableFor,
@@ -80,18 +83,39 @@ export default function PlanTripForm({ onPlanTrip, onCancel }: PlanTripFormProps
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <View style={styles.buttonRow}>
-        <Button mode='outlined' onPress={onCancel} style={styles.button}>Cancel</Button>
-        <Button mode='contained' onPress={handleSubmit} style={styles.button}>Plan Trip</Button>
+        <Button mode='outlined' onPress={onCancel} style={styles.button}>
+          Cancel
+        </Button>
+        <Button mode='contained' onPress={handleSubmit} style={styles.button}>
+          Plan Trip
+        </Button>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    marginHorizontal: 6,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
   container: {
-    padding: 20,
     backgroundColor: 'white',
     borderRadius: 12,
+    padding: 20,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  input: {
+    marginBottom: 10,
   },
   title: {
     fontSize: 22,
@@ -99,21 +123,4 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  input: {
-    marginBottom: 10,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 6,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-}); 
+});

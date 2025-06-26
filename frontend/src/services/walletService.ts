@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { getAccessToken } from '../utils/auth.ts'; // Updated path to client-side auth utils
+import { getAccessToken } from '../utils/auth.ts';
+import getEnvVars from '../../config.tsx';
 
-const API_BASE = 'http://192.168.1.3:5000/api/wallet'; // Update with your backend URL
+const { API_BASE_URL } = getEnvVars();
+const API_BASE = `${API_BASE_URL}/api/wallet`;
 
 export const getBalance = async (): Promise<number> => {
   const token = await getAccessToken();
-  console.log('Fetched token:', token); // Debug
   const res = await axios.get(`${API_BASE}/balance`, {
     headers: { Authorization: `Bearer ${token}` },
   });

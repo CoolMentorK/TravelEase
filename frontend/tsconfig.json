@@ -3,6 +3,7 @@
     "target": "esnext",
     "module": "NodeNext",
     "jsx": "react-native",
+    "baseUrl": ".",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -13,9 +14,14 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "isolatedModules": true,
+    "paths": {
+      "@env": ["types/env.d.ts"]
+    },
     "types": [
       "react",
       "react-native",
+      "@types/react",
+      "@types/react-native",
       "@react-native-async-storage/async-storage"
     ],
     "lib": [

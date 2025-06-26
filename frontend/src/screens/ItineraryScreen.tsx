@@ -107,10 +107,18 @@ export default function ItineraryScreen() {
         ListFooterComponent={
           <View style={styles.summarySection}>
             <Text style={styles.summaryTitle}>Summary</Text>
-            <Text style={styles.summaryText}>Total Cost: ${itineraryToShow.summary.total_cost_usd.toFixed(2)} USD</Text>
-            <Text style={styles.summaryText}>Total Duration: {itineraryToShow.summary.total_duration_hours} hours</Text>
-            <Text style={styles.summaryText}>Total Distance: {itineraryToShow.summary.total_distance_km} km</Text>
-            <Text style={styles.summaryText}>Number of Activities: {itineraryToShow.metadata.num_activities}</Text>
+            <Text style={styles.summaryText}>
+              Total Cost: ${itineraryToShow.summary.total_cost_usd.toFixed(2)} USD
+            </Text>
+            <Text style={styles.summaryText}>
+              Total Duration: {itineraryToShow.summary.total_duration_hours} hours
+            </Text>
+            <Text style={styles.summaryText}>
+              Total Distance: {itineraryToShow.summary.total_distance_km} km
+            </Text>
+            <Text style={styles.summaryText}>
+              Number of Activities: {itineraryToShow.metadata.num_activities}
+            </Text>
           </View>
         }
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -120,81 +128,62 @@ export default function ItineraryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: COLORS.background,
-    flex: 1,
-  },
-  header: {
-    backgroundColor: COLORS.primary,
-    padding: 24,
-    paddingTop: 48,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    elevation: 4,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-  },
-  headerTitle: {
-    color: COLORS.surface,
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginBottom: 18,
-    letterSpacing: 0.5,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 8,
-  },
-  stat: {
-    alignItems: 'center',
+  activityCard: {
     backgroundColor: COLORS.surface,
     borderRadius: 12,
-    padding: 12,
-    minWidth: 90,
     elevation: 2,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    marginBottom: 10,
+    padding: 14,
   },
-  statNumber: {
-    color: COLORS.primary,
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  statLabel: {
-    color: COLORS.secondaryText,
+  activityCategory: {
+    color: COLORS.accent,
     fontSize: 13,
+    marginBottom: 2,
+  },
+  activityCost: {
+    color: COLORS.success,
+    fontSize: 14,
+    fontWeight: 'bold',
     marginTop: 4,
   },
-  searchbar: {
-    elevation: 2,
-    margin: 18,
-    borderRadius: 16,
-    backgroundColor: COLORS.surface,
+  activityDesc: {
+    color: COLORS.secondaryText,
+    fontSize: 14,
+    marginBottom: 2,
   },
-  categoryFilter: {
-    marginBottom: 10,
+  activityDetail: {
+    color: COLORS.mediumGray,
+    fontSize: 13,
   },
-  categoryList: {
-    paddingHorizontal: 18,
+  activityName: {
+    color: COLORS.text,
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  cardDetailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  cardHeaderRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
   categoryChip: {
-    marginHorizontal: 4,
     backgroundColor: COLORS.surface,
     borderColor: COLORS.border,
-    borderWidth: 1,
     borderRadius: 20,
+    borderWidth: 1,
+    marginHorizontal: 4,
   },
   categoryChipSelected: {
-    marginHorizontal: 4,
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
-    borderWidth: 1,
     borderRadius: 20,
+    borderWidth: 1,
+    marginHorizontal: 4,
   },
   categoryChipText: {
     color: COLORS.text,
@@ -204,21 +193,26 @@ const styles = StyleSheet.create({
     color: COLORS.surface,
     fontWeight: 'bold',
   },
-  listContainer: {
-    paddingBottom: 90,
+  categoryFilter: {
+    marginBottom: 10,
   },
-  fab: {
-    backgroundColor: COLORS.accent,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    margin: 20,
-    borderRadius: 32,
-    elevation: 4,
-    shadowColor: COLORS.accent,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
+  categoryList: {
+    paddingHorizontal: 18,
+  },
+  container: {
+    backgroundColor: COLORS.background,
+    flex: 1,
+  },
+  daySection: {
+    marginBottom: 8,
+    marginHorizontal: 16,
+    marginTop: 18,
+  },
+  dayTitle: {
+    color: COLORS.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
   emptyState: {
     alignItems: 'center',
@@ -226,92 +220,106 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 60,
   },
+  emptySubtitle: {
+    color: COLORS.secondaryText,
+    fontSize: 16,
+    textAlign: 'center',
+  },
   emptyTitle: {
     color: COLORS.text,
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  emptySubtitle: {
-    color: COLORS.secondaryText,
-    fontSize: 16,
-    textAlign: 'center',
+  fab: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 32,
+    bottom: 0,
+    elevation: 4,
+    margin: 20,
+    position: 'absolute',
+    right: 0,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+  },
+  header: {
+    backgroundColor: COLORS.primary,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 4,
+    padding: 24,
+    paddingTop: 48,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  headerTitle: {
+    color: COLORS.surface,
+    fontSize: 30,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+    marginBottom: 18,
+  },
+  listContainer: {
+    paddingBottom: 90,
+  },
+  searchbar: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    elevation: 2,
+    margin: 18,
   },
   snackbar: {
     backgroundColor: COLORS.primary,
     borderRadius: 8,
   },
-  daySection: {
-    marginTop: 18,
-    marginHorizontal: 16,
-    marginBottom: 8,
-  },
-  dayTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-    marginBottom: 8,
-  },
-  activityCard: {
+  stat: {
+    alignItems: 'center',
     backgroundColor: COLORS.surface,
     borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
     elevation: 2,
+    minWidth: 90,
+    padding: 12,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
-  activityName: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: COLORS.text,
-  },
-  activityCategory: {
-    fontSize: 13,
-    color: COLORS.accent,
-    marginBottom: 2,
-  },
-  activityDesc: {
-    fontSize: 14,
+  statLabel: {
     color: COLORS.secondaryText,
-    marginBottom: 2,
-  },
-  activityDetail: {
     fontSize: 13,
-    color: COLORS.mediumGray,
-  },
-  activityCost: {
-    fontSize: 14,
-    color: COLORS.success,
-    fontWeight: 'bold',
     marginTop: 4,
   },
+  statNumber: {
+    color: COLORS.primary,
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 8,
+  },
   summarySection: {
-    marginTop: 24,
-    marginHorizontal: 16,
     backgroundColor: COLORS.lightGray,
     borderRadius: 12,
+    marginHorizontal: 16,
+    marginTop: 24,
     padding: 16,
   },
+  summaryText: {
+    color: COLORS.text,
+    fontSize: 15,
+    marginBottom: 2,
+  },
   summaryTitle: {
+    color: COLORS.primary,
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLORS.primary,
     marginBottom: 8,
-  },
-  summaryText: {
-    fontSize: 15,
-    color: COLORS.text,
-    marginBottom: 2,
-  },
-  cardHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  cardDetailsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 2,
   },
 });
 

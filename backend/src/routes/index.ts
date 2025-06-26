@@ -1,8 +1,8 @@
 import express from 'express'
+import vendorRoutes from 'routes/VendorRoutes'
+import vendorDashboardRoutes from 'routes/vendorDashboardRoutes'
 import authRoutes from './auth'
 import walletRoutes from './wallet' // import wallet routes
-import vendorRoutes from "routes/VendorRoutes";
-import vendorDashboardRoutes from "routes/vendorDashboardRoutes";
 
 const router = express.Router()
 

@@ -10,7 +10,6 @@ router.use(protect)
 router.get('/balance', getBalance)
 router.post('/topup', topUp)
 router.post('/pay', payVendor)
-router.get('/transactions', getTransactionHistory);
-
+router.get('/transactions', getTransactionHistory)
 
 export default router

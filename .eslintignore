@@ -1,4 +1,4 @@
 backend/
 logs/
 node_modules/
-dist/
+babel.config.js
