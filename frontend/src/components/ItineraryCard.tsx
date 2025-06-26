@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Card, Chip, IconButton } from 'react-native-paper';
+import { COLORS } from '../constants/colors.ts';
 
 interface ItineraryItem {
   id: string;
@@ -20,19 +21,97 @@ interface ItineraryCardProps {
   onDelete?: () => void;
 }
 
+const styles = StyleSheet.create({
+  actions: {
+    flexDirection: 'row',
+  },
+  card: {
+    borderRadius: 12,
+    elevation: 3,
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  categoryChip: {
+    backgroundColor: COLORS.transparent, // Use COLORS.transparent
+    borderWidth: 1, // Ensure border is visible for outlined Chip
+  },
+  content: {
+    padding: 16,
+  },
+  details: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  duration: {
+    color: COLORS.textPrimary, // Use COLORS.textPrimary
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  durationContainer: {
+    marginRight: 24,
+  },
+  durationLabel: {
+    color: COLORS.textSecondary, // Use COLORS.textSecondary
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  footer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  header: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  location: {
+    color: COLORS.location, // Use COLORS.location
+    fontSize: 14,
+  },
+  price: {
+    color: COLORS.price, // Use COLORS.price
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  time: {
+    color: COLORS.textPrimary, // Use COLORS.textPrimary
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  timeContainer: {
+    marginRight: 24,
+  },
+  timeLabel: {
+    color: COLORS.textSecondary, // Use COLORS.textSecondary
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  title: {
+    color: COLORS.textPrimary, // Use COLORS.textPrimary
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+});
+
 export default function ItineraryCard({ item, onPress, onEdit, onDelete }: ItineraryCardProps) {
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'attraction':
-        return '#FF6B6B';
+        return COLORS.categoryAttraction;
       case 'restaurant':
-        return '#4ECDC4';
+        return COLORS.categoryRestaurant;
       case 'hotel':
-        return '#45B7D1';
+        return COLORS.categoryHotel;
       case 'transport':
-        return '#96CEB4';
+        return COLORS.categoryTransport;
       default:
-        return '#A8A8A8';
+        return COLORS.categoryDefault;
     }
   };
 
@@ -45,9 +124,16 @@ export default function ItineraryCard({ item, onPress, onEdit, onDelete }: Itine
             <Text style={styles.location}>{item.location}</Text>
           </View>
           <View style={styles.actions}>
-            {onEdit && <IconButton icon='pencil' size={20} onPress={onEdit} iconColor='#666' />}
+            {onEdit && (
+              <IconButton icon='pencil' size={20} onPress={onEdit} iconColor={COLORS.location} />
+            )}
             {onDelete && (
-              <IconButton icon='delete' size={20} onPress={onDelete} iconColor='#FF6B6B' />
+              <IconButton
+                icon='delete'
+                size={20}
+                onPress={onDelete}
+                iconColor={COLORS.categoryAttraction}
+              />
             )}
           </View>
         </View>
@@ -76,80 +162,3 @@ export default function ItineraryCard({ item, onPress, onEdit, onDelete }: Itine
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  actions: {
-    flexDirection: 'row',
-  },
-  card: {
-    borderRadius: 12,
-    elevation: 3,
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  categoryChip: {
-    backgroundColor: 'transparent',
-  },
-  content: {
-    padding: 16,
-  },
-  details: {
-    flexDirection: 'row',
-    marginBottom: 12,
-  },
-  duration: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  durationContainer: {
-    marginRight: 24,
-  },
-  durationLabel: {
-    color: '#999',
-    fontSize: 12,
-    marginBottom: 2,
-  },
-  footer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  location: {
-    color: '#666',
-    fontSize: 14,
-  },
-  price: {
-    color: '#4CAF50',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  time: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  timeContainer: {
-    marginRight: 24,
-  },
-  timeLabel: {
-    color: '#999',
-    fontSize: 12,
-    marginBottom: 2,
-  },
-  title: {
-    color: '#333',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-});

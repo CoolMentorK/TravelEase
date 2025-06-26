@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
+import { View, StyleSheet, Text } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
+import { COLORS } from '../constants/colors.ts';
 
 interface PlanTripFormProps {
   onPlanTrip: (data: PlanTripFormData) => void;
@@ -14,6 +15,37 @@ export interface PlanTripFormData {
   budget: number;
   suitable_for: string;
 }
+
+const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    marginHorizontal: 6,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  container: {
+    backgroundColor: COLORS.white, // Use COLORS.white
+    borderRadius: 12,
+    padding: 20,
+  },
+  error: {
+    color: COLORS.errorTextPlan, // Use COLORS.errorTextPlan
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  input: {
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+});
 
 export default function PlanTripForm({ onPlanTrip, onCancel }: PlanTripFormProps) {
   const [location, setLocation] = useState('');
@@ -84,43 +116,12 @@ export default function PlanTripForm({ onPlanTrip, onCancel }: PlanTripFormProps
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <View style={styles.buttonRow}>
         <Button mode='outlined' onPress={onCancel} style={styles.button}>
-          Cancel
+          <Text>Cancel</Text>
         </Button>
         <Button mode='contained' onPress={handleSubmit} style={styles.button}>
-          Plan Trip
+          <Text>Plan Trip</Text>
         </Button>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flex: 1,
-    marginHorizontal: 6,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  container: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  input: {
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-});

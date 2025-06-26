@@ -1,16 +1,118 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Card, Button, Title, Paragraph, Portal, Modal, Menu } from 'react-native-paper';
+import { Card, Button, Portal, Modal, Menu } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/MainStack.tsx';
 import { useTranslation } from 'react-i18next';
 import { COLORS } from '../constants/colors.ts';
-import type { PlanTripFormData } from '../components/PlanTripForm.tsx';
 import PlanTripForm from '../components/PlanTripForm.tsx';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons.js';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const styles = StyleSheet.create({
+  appTitle: {
+    color: COLORS.surface,
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  buttonContent: {
+    paddingVertical: 8,
+  },
+  cardContent: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  container: {
+    backgroundColor: COLORS.background,
+    flex: 1,
+  },
+  featureCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 14,
+    elevation: 3,
+    marginBottom: 16,
+  },
+  featureDescription: {
+    color: COLORS.secondaryText,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  featureIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  featureTitle: {
+    color: COLORS.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  featuresContainer: {
+    padding: 16,
+  },
+  modalContainer: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 18,
+    elevation: 6,
+    margin: 24,
+    padding: 16,
+  },
+  planTripButton: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 24,
+    elevation: 3,
+    marginBottom: 12,
+    minWidth: 180,
+  },
+  planTripButtonContent: {
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  planTripContainer: {
+    alignItems: 'center',
+    marginVertical: 18,
+  },
+  profileButton: {
+    marginLeft: 0,
+  },
+  profileMenuWrapper: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    zIndex: 2,
+  },
+  secondaryButton: {
+    borderColor: COLORS.primary,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  subtitle: {
+    color: COLORS.subtitleText,
+    fontSize: 15,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 8,
+    paddingBottom: 10,
+    paddingTop: 36,
+    position: 'relative',
+  },
+  welcomeText: {
+    color: COLORS.surface,
+    fontSize: 18,
+    marginBottom: 2,
+  },
+});
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -114,7 +216,7 @@ export default function HomeScreen() {
     },
   };
 
-  const handlePlanTrip = (formData: PlanTripFormData) => {
+  const handlePlanTrip = () => {
     setPlanTripVisible(false);
     setTimeout(() => {
       navigation.navigate('Itinerary', { plannedItinerary: mockItineraryResponse });
@@ -168,8 +270,8 @@ export default function HomeScreen() {
           <Card key={index} style={styles.featureCard} onPress={feature.action}>
             <Card.Content style={styles.cardContent}>
               <Text style={styles.featureIcon}>{feature.icon}</Text>
-              <Title style={styles.featureTitle}>{feature.title}</Title>
-              <Paragraph style={styles.featureDescription}>{feature.description}</Paragraph>
+              <Text style={styles.featureTitle}>{feature.title}</Text>
+              <Text style={styles.featureDescription}>{feature.description}</Text>
             </Card.Content>
           </Card>
         ))}
@@ -185,113 +287,3 @@ export default function HomeScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  appTitle: {
-    color: COLORS.surface,
-    fontSize: 32,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  buttonContent: {
-    paddingVertical: 8,
-  },
-  cardContent: {
-    alignItems: 'center',
-    padding: 20,
-  },
-  container: {
-    backgroundColor: COLORS.background,
-    flex: 1,
-  },
-  featureCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 14,
-    elevation: 3,
-    marginBottom: 16,
-  },
-  featureDescription: {
-    color: COLORS.secondaryText,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  featureIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  featureTitle: {
-    color: COLORS.text,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  featuresContainer: {
-    padding: 16,
-  },
-  modalContainer: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 18,
-    elevation: 6,
-    margin: 24,
-    padding: 16,
-  },
-  planTripButton: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 24,
-    elevation: 3,
-    marginBottom: 12,
-    minWidth: 180,
-  },
-  planTripButtonContent: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-  },
-  planTripContainer: {
-    alignItems: 'center',
-    marginVertical: 18,
-  },
-  planerator: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 24,
-    elevation: 3,
-    marginBottom: 12,
-    minWidth: 180,
-  },
-  profileButton: {
-    marginLeft: 0,
-  },
-  profileMenuWrapper: {
-    position: 'absolute',
-    right: 16,
-    top: 16,
-    zIndex: 2,
-  },
-  secondaryButton: {
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  titleContainer: {
-    alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    marginBottom: 8,
-    paddingBottom: 10,
-    paddingTop: 36,
-    position: 'relative',
-  },
-  welcomeText: {
-    color: COLORS.surface,
-    fontSize: 18,
-    marginBottom: 2,
-  },
-});

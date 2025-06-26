@@ -1,23 +1,150 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Alert } from 'react-native';
-import { FAB, Text, Chip, Searchbar, Snackbar } from 'react-native-paper';
-import ItineraryCard from '../components/ItineraryCard.tsx';
-import type { ItineraryFormData } from '../components/ItineraryInput.tsx';
-import ItineraryInput from '../components/ItineraryInput.tsx';
-import type { ItineraryItem } from '../services/api.tsx';
-import { itineraryApi } from '../services/api.tsx';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
 import { COLORS } from '../constants/colors.ts';
 import { useRoute } from '@react-navigation/native';
 
+// Define types for itinerary data
+interface Activity {
+  address: string;
+  best_time_to_visit: string;
+  category: string;
+  cost_usd: number;
+  description: string;
+  duration_hours: number;
+  name: string;
+  notes: string;
+  opening_hours: string;
+}
+
+interface Day {
+  day: number;
+  activities: Activity[];
+}
+
+interface Itinerary {
+  itinerary: Day[];
+  metadata: {
+    num_activities: number;
+    processing_time_ms: number;
+  };
+  summary: {
+    total_cost_usd: number;
+    total_distance_km: number;
+    total_duration_hours: number;
+  };
+}
+
+type RouteParams = {
+  plannedItinerary?: Itinerary;
+};
+
+const styles = StyleSheet.create({
+  activityCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    elevation: 2,
+    marginBottom: 10,
+    padding: 14,
+  },
+  activityCategory: {
+    color: COLORS.accent,
+    fontSize: 13,
+    marginBottom: 2,
+  },
+  activityCost: {
+    color: COLORS.success,
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 4,
+  },
+  activityDesc: {
+    color: COLORS.secondaryText,
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  activityDetail: {
+    color: COLORS.mediumGray,
+    fontSize: 13,
+  },
+  activityName: {
+    color: COLORS.text,
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  cardDetailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  cardHeaderRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  container: {
+    backgroundColor: COLORS.background,
+    flex: 1,
+  },
+  daySection: {
+    marginBottom: 8,
+    marginHorizontal: 16,
+    marginTop: 18,
+  },
+  dayTitle: {
+    color: COLORS.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  header: {
+    backgroundColor: COLORS.primary,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 4,
+    padding: 24,
+    paddingTop: 48,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  headerTitle: {
+    color: COLORS.surface,
+    fontSize: 30,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+    marginBottom: 18,
+  },
+  listContent: {
+    paddingBottom: 40,
+  },
+  summarySection: {
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginTop: 24,
+    padding: 16,
+  },
+  summaryText: {
+    color: COLORS.text,
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  summaryTitle: {
+    color: COLORS.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+});
+
 export default function ItineraryScreen() {
-  const { t } = useTranslation();
-  const route = useRoute();
-  // @ts-ignore
+  const route = useRoute<RouteParams>();
   const plannedItinerary = route.params?.plannedItinerary;
 
   // Default itinerary if none is passed
-  const defaultItinerary = {
+  const defaultItinerary: Itinerary = {
     itinerary: [
       {
         day: 1,
@@ -71,7 +198,6 @@ export default function ItineraryScreen() {
 
   const itineraryToShow = plannedItinerary || defaultItinerary;
 
-  // Modern planned itinerary display (always)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -83,7 +209,7 @@ export default function ItineraryScreen() {
         renderItem={({ item }) => (
           <View style={styles.daySection}>
             <Text style={styles.dayTitle}>Day {item.day}</Text>
-            {item.activities.map((act: any, idx: number) => (
+            {item.activities.map((act: Activity, idx: number) => (
               <View key={idx} style={styles.activityCard}>
                 <View style={styles.cardHeaderRow}>
                   <Text style={styles.activityName}>{act.name}</Text>
@@ -121,206 +247,8 @@ export default function ItineraryScreen() {
             </Text>
           </View>
         }
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  activityCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    elevation: 2,
-    marginBottom: 10,
-    padding: 14,
-  },
-  activityCategory: {
-    color: COLORS.accent,
-    fontSize: 13,
-    marginBottom: 2,
-  },
-  activityCost: {
-    color: COLORS.success,
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  activityDesc: {
-    color: COLORS.secondaryText,
-    fontSize: 14,
-    marginBottom: 2,
-  },
-  activityDetail: {
-    color: COLORS.mediumGray,
-    fontSize: 13,
-  },
-  activityName: {
-    color: COLORS.text,
-    fontSize: 17,
-    fontWeight: 'bold',
-  },
-  cardDetailsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 2,
-  },
-  cardHeaderRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  categoryChip: {
-    backgroundColor: COLORS.surface,
-    borderColor: COLORS.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginHorizontal: 4,
-  },
-  categoryChipSelected: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginHorizontal: 4,
-  },
-  categoryChipText: {
-    color: COLORS.text,
-    fontWeight: '500',
-  },
-  categoryChipTextSelected: {
-    color: COLORS.surface,
-    fontWeight: 'bold',
-  },
-  categoryFilter: {
-    marginBottom: 10,
-  },
-  categoryList: {
-    paddingHorizontal: 18,
-  },
-  container: {
-    backgroundColor: COLORS.background,
-    flex: 1,
-  },
-  daySection: {
-    marginBottom: 8,
-    marginHorizontal: 16,
-    marginTop: 18,
-  },
-  dayTitle: {
-    color: COLORS.primary,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  emptyState: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptySubtitle: {
-    color: COLORS.secondaryText,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  emptyTitle: {
-    color: COLORS.text,
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  fab: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 32,
-    bottom: 0,
-    elevation: 4,
-    margin: 20,
-    position: 'absolute',
-    right: 0,
-    shadowColor: COLORS.accent,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-  },
-  header: {
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    elevation: 4,
-    padding: 24,
-    paddingTop: 48,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-  },
-  headerTitle: {
-    color: COLORS.surface,
-    fontSize: 30,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-    marginBottom: 18,
-  },
-  listContainer: {
-    paddingBottom: 90,
-  },
-  searchbar: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 16,
-    elevation: 2,
-    margin: 18,
-  },
-  snackbar: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 8,
-  },
-  stat: {
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    elevation: 2,
-    minWidth: 90,
-    padding: 12,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-  },
-  statLabel: {
-    color: COLORS.secondaryText,
-    fontSize: 13,
-    marginTop: 4,
-  },
-  statNumber: {
-    color: COLORS.primary,
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 8,
-  },
-  summarySection: {
-    backgroundColor: COLORS.lightGray,
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginTop: 24,
-    padding: 16,
-  },
-  summaryText: {
-    color: COLORS.text,
-    fontSize: 15,
-    marginBottom: 2,
-  },
-  summaryTitle: {
-    color: COLORS.primary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-});
-
-// test

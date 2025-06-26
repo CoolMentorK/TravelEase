@@ -1,6 +1,6 @@
-// src/middlewares/protectVendor.ts
 import jwt from 'jsonwebtoken'
 import type { Request, Response, NextFunction } from 'express'
+import type { IVendor } from '../models/Vendor'
 import Vendor from '../models/Vendor'
 import logger from '../config/logger'
 
@@ -9,19 +9,25 @@ interface JwtPayload {
 }
 
 export interface VendorAuthRequest extends Request {
-  vendor?: any
+  vendor?: IVendor
 }
 
-export const protectVendor = async (req: VendorAuthRequest, res: Response, next: NextFunction) => {
+export const protectVendor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   const token = req.headers.authorization?.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({ error: 'No token provided' })
+    res.status(401).json({ error: 'No token provided' })
+    return
   }
 
   if (!process.env.JWT_SECRET) {
     logger.error('JWT_SECRET not defined in environment')
-    return res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: 'Internal server error' })
+    return
   }
 
   try {
@@ -29,16 +35,17 @@ export const protectVendor = async (req: VendorAuthRequest, res: Response, next:
     const vendor = await Vendor.findById(decoded.id).select('-password')
 
     if (!vendor) {
-      return res.status(401).json({ error: 'Vendor not found' })
+      res.status(401).json({ error: 'Vendor not found' })
+      return
     }
 
-    req.vendor = vendor
+    ;(req as VendorAuthRequest).vendor = vendor
     next()
   } catch (err) {
     logger.error(
       'Vendor authentication failed:',
       err instanceof Error ? err.message : 'Invalid token',
     )
-    return res.status(401).json({ error: 'Invalid token' })
+    res.status(401).json({ error: 'Invalid token' })
   }
 }

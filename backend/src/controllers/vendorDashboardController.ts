@@ -1,12 +1,15 @@
 import type { Request, Response } from 'express'
+import type { IVendor } from '../models/Vendor'
+import logger from '../config/logger'
 
-interface AuthRequest extends Request {
-  vendor?: any
+interface VendorAuthRequest extends Request {
+  vendor?: IVendor
 }
 
-export const getDashboardData = async (req: AuthRequest, res: Response) => {
+export const getDashboardData = async (req: VendorAuthRequest, res: Response): Promise<void> => {
   try {
-    // For now, mock data (replace with DB queries later)
+    const { vendor } = req
+    logger.info(`Vendor accessing dashboard: ${vendor?.name}`)
 
     const feedback = [
       { id: '1', tourist: 'Alice', rating: 4, comment: 'Great experience!' },
@@ -26,6 +29,7 @@ export const getDashboardData = async (req: AuthRequest, res: Response) => {
 
     res.json({ feedback, transactions, summary })
   } catch (error) {
+    console.error('Error fetching dashboard data:', error)
     res.status(500).json({ message: 'Failed to fetch dashboard data' })
   }
 }

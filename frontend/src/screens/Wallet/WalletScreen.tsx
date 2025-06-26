@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import WalletBalance from '../../components/Wallet/WalletBalance.tsx';
 import WalletTopUpForm from '../../components/Wallet/WalletTopUpForm.tsx';
 import { getBalance } from '../../services/walletService.ts';
@@ -22,8 +23,12 @@ const WalletScreen = () => {
     try {
       const fetchedBalance = await getBalance();
       setBalance(fetchedBalance);
-    } catch (err: any) {
-      console.error('Error loading balance:', err.response?.data || err.message);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error('Error loading balance:', err.response?.data || err.message);
+      } else {
+        console.error('Error loading balance:', err);
+      }
       Alert.alert('Error', 'Failed to load wallet balance');
     }
   };

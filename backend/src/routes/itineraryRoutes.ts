@@ -8,7 +8,7 @@ import {
   addItineraryItem,
   updateItineraryItem,
   deleteItineraryItem,
-} from '../controllers/itineraryController'
+} from 'controllers/itineraryController'
 
 const router = express.Router()
 

@@ -1,5 +1,5 @@
-import { Wallet } from 'models/Wallet'
-import { Transaction } from 'models/Transaction'
+import { Wallet } from 'src/models/Wallet'
+import { Transaction } from 'src/models/Transaction'
 
 export const getUserWallet = async (userId: string) => {
   let wallet = await Wallet.findOne({ userId })
@@ -48,6 +48,5 @@ export const deductFromWallet = async (userId: string, lkrAmount: number, vendor
 }
 
 export const getUserTransactions = async (userId: string) => {
-  const transactions = await Transaction.find({ userId }).sort({ timestamp: -1 })
-  return transactions
+  return Transaction.find({ userId }).sort({ timestamp: -1 })
 }

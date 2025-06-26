@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { TextInput, Button, Text, Chip, Portal, Modal } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '../constants/colors.ts';
 
 interface ItineraryInputProps {
   visible: boolean;
@@ -21,6 +22,74 @@ export interface ItineraryFormData {
 }
 
 const categories = ['attraction', 'restaurant', 'hotel', 'transport', 'shopping', 'other'];
+
+const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  cancelButton: {
+    borderColor: COLORS.cancelBorder, // Use COLORS.cancelBorder
+    borderWidth: 1, // Ensure border is visible
+  },
+  categoryChip: {
+    borderWidth: 1,
+    margin: 4, // Ensure border is visible for outlined Chip
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
+  },
+  errorText: {
+    color: COLORS.errorText, // Use COLORS.errorText
+    fontSize: 12,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  halfInput: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  input: {
+    marginBottom: 8,
+  },
+  modal: {
+    backgroundColor: COLORS.white, // Use COLORS.white
+    borderRadius: 12,
+    margin: 20,
+    maxHeight: '80%',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  scrollView: {
+    padding: 20,
+  },
+  sectionTitle: {
+    color: COLORS.textPrimary, // Use COLORS.textPrimary
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  submitButton: {
+    backgroundColor: COLORS.submitButton, // Use COLORS.submitButton
+  },
+  title: {
+    color: COLORS.textPrimary, // Use COLORS.textPrimary
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+});
 
 export default function ItineraryInput({
   visible,
@@ -69,12 +138,15 @@ export default function ItineraryInput({
     }
   };
 
+  // Suppress security/detect-object-injection as field is typed as keyof ItineraryFormData
+  /* eslint-disable security/detect-object-injection */
   const updateFormData = (field: keyof ItineraryFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
+  /* eslint-enable security/detect-object-injection */
 
   return (
     <Portal>
@@ -180,69 +252,3 @@ export default function ItineraryInput({
     </Portal>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  cancelButton: {
-    borderColor: '#666',
-  },
-  categoryChip: {
-    margin: 4,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 12,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  halfInput: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  input: {
-    marginBottom: 8,
-  },
-  modal: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    margin: 20,
-    maxHeight: '80%',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  scrollView: {
-    padding: 20,
-  },
-  sectionTitle: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  submitButton: {
-    backgroundColor: '#4CAF50',
-  },
-  title: {
-    color: '#333',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-});
