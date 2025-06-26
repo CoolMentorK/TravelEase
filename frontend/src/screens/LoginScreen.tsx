@@ -147,6 +147,15 @@ export default function LoginScreen({ navigation }: any) {
           Don't have an account? Sign Up
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('VendorLogin')}
+        style={styles.linkWrapper}
+        accessibilityRole='button'
+        accessibilityLabel='Vendor Login link'>
+        <Text style={[styles.linkText, { color: isDarkMode ? '#F2C94C' : '#F2994A' }]}>
+          Are you a vendor? Login here
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

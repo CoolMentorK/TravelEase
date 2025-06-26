@@ -1,4 +1,12 @@
-interface EnvConfig {
+import { DEV_API_IP, STRIPE_PUBLISHABLE_KEY, PAYHERE_MERCHANT_ID } from '@env';
+import { Platform } from 'react-native';
+
+const getLocalApiUrl = () =>
+  __DEV__
+    ? `http://${DEV_API_IP || (Platform.OS === 'android' ? '10.0.2.2' : 'localhost')}:5000`
+    : 'https://api.travelease.com';
+
+export interface EnvConfig {
   API_BASE_URL: string;
   STRIPE_PUBLISHABLE_KEY: string;
   PAYHERE_MERCHANT_ID: string;
@@ -6,19 +14,16 @@ interface EnvConfig {
 
 const ENV: { dev: EnvConfig; prod: EnvConfig } = {
   dev: {
-    API_BASE_URL: 'http://192.168.1.3:5000', //was http://localhost:5000 , should be changed to the pc ip address to test in mobile
-    STRIPE_PUBLISHABLE_KEY: 'pk_test_51Hxxxxxxx',
-    PAYHERE_MERCHANT_ID: '1212345',
+    API_BASE_URL: getLocalApiUrl(),
+    STRIPE_PUBLISHABLE_KEY,
+    PAYHERE_MERCHANT_ID,
   },
   prod: {
     API_BASE_URL: 'https://api.travelease.com',
-    STRIPE_PUBLISHABLE_KEY: 'pk_live_51Hxxxxxxx',
-    PAYHERE_MERCHANT_ID: '1212345',
+    STRIPE_PUBLISHABLE_KEY,
+    PAYHERE_MERCHANT_ID,
   },
 };
 
-const getEnvVars = (): EnvConfig => {
-  return __DEV__ ? ENV.dev : ENV.prod;
-};
-
+const getEnvVars = (): EnvConfig => (__DEV__ ? ENV.dev : ENV.prod);
 export default getEnvVars;
