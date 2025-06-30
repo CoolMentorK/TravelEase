@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import type { Transaction } from '../../services/walletService.ts';
 import { getTransactions } from '../../services/walletService.ts';
+import { COLORS } from '../../constants/colors.ts';
 
 const styles = StyleSheet.create({
   amount: {
-    color: '#2e7d32',
+    color: COLORS.success,
   },
   container: {
     padding: 16,
   },
   date: {
-    color: '#555',
+    color: COLORS.mediumGray,
     fontSize: 12,
   },
   item: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: COLORS.lightestGray,
     borderRadius: 8,
     marginBottom: 10,
     padding: 12,
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   vendor: {
-    color: '#333',
+    color: COLORS.textPrimary,
     fontSize: 12,
     fontStyle: 'italic',
   },
@@ -43,15 +44,19 @@ const TransactionHistoryScreen = () => {
     try {
       const data = await getTransactions();
       setTransactions(data);
-    } catch (err) {
-      console.error('Failed to load transactions');
+    } catch (err: unknown) {
+      console.error(
+        'Failed to load transactions:',
+        err instanceof Error ? err.message : 'Unknown error',
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadTransactions();
+    // eslint-disable-next-line no-void
+    void loadTransactions(); // Suppress ESLint warning for ignored promise
   }, []);
 
   const renderItem = ({ item }: { item: Transaction }) => (
@@ -67,7 +72,7 @@ const TransactionHistoryScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Transaction History</Text>
       {loading ? (
-        <ActivityIndicator />
+        <ActivityIndicator accessibilityLabel='Loading transactions' />
       ) : (
         <FlatList
           data={transactions}

@@ -110,6 +110,8 @@ module.exports = {
       },
       rules: {
         'no-secrets/no-secrets': 'off',
+        'security/detect-unsafe-regex': 'off',
+        'security/detect-non-literal-fs-filename': 'off',
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
       },
     },

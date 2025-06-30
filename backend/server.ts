@@ -1,10 +1,10 @@
-import type { Request, Response } from 'express'
+import type { Request, Response, ErrorRequestHandler } from 'express'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
-import { connectDB } from 'config/db' // Adjusted path
-import logger from './src/config/logger' // Import logger
+import { connectDB } from './src/config/db'
+import logger from './src/config/logger'
 import routes from './src/routes'
 
 dotenv.config()
@@ -12,7 +12,7 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(cors())
-app.use(bodyParser.json()) // Parse JSON bodies
+app.use(bodyParser.json())
 
 app.use('/api', routes)
 
@@ -21,7 +21,7 @@ app.get('/', (_req: Request, res: Response) => {
   res.send('TravelEase backend up!')
 })
 
-// Basic itinerary routes (mock data)
+// Mock route example (ok to keep or remove later)
 app.get('/api/itineraries', (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -45,6 +45,7 @@ app.get('/api/itineraries', (_req: Request, res: Response) => {
   })
 })
 
+// Add itinerary POST mock
 app.post('/api/itineraries', (req: Request, res: Response) => {
   const { title, items } = req.body
   res.status(201).json({
@@ -57,6 +58,19 @@ app.post('/api/itineraries', (req: Request, res: Response) => {
   })
 })
 
+// Global error handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  console.error('Unhandled error:', err)
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+  })
+}
+
+app.use(errorHandler)
+
+// ✅ Start server
 const startServer = async (): Promise<void> => {
   try {
     await connectDB()
@@ -71,8 +85,7 @@ const startServer = async (): Promise<void> => {
   }
 }
 
-// Handle the startServer promise
 startServer().catch(error => {
   logger.error('Application failed to start:', error)
-  process.exit(1)
+  throw error
 })

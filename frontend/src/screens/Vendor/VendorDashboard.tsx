@@ -9,13 +9,191 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
+import { COLORS } from '../../constants/colors.ts';
+
+interface Product {
+  id: string;
+  title: string;
+  category: string;
+  price: number;
+}
+
+interface Feedback {
+  id: string;
+  tourist: string;
+  rating: number;
+  comment: string;
+}
+
+interface Transaction {
+  id: string;
+  amount: number;
+  date: string;
+  product: string;
+}
+
+interface Summary {
+  totalEarnings: number;
+  productsSold: number;
+  feedbackCount: number;
+}
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 16,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+  },
+  cardHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  cardTitle: {
+    color: COLORS.orangeAccent,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  container: {
+    backgroundColor: COLORS.lightBackground,
+    padding: 16,
+  },
+  editButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.accent,
+    borderRadius: 8,
+    marginTop: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+  },
+  editButtonText: {
+    color: COLORS.darkBackground,
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  heading: {
+    color: COLORS.primary,
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  itemSub: {
+    color: COLORS.location,
+    fontSize: 14,
+    marginTop: 2,
+  },
+  itemTitle: {
+    color: COLORS.primary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  listItem: {
+    borderBottomColor: COLORS.borderLightest,
+    borderBottomWidth: 1,
+    marginBottom: 12,
+    paddingBottom: 8,
+  },
+  loading: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: COLORS.textSecondary,
+    fontSize: 18,
+  },
+  modalBackdrop: {
+    alignItems: 'center',
+    backgroundColor: COLORS.backdrop,
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalCloseButton: {
+    alignItems: 'center',
+    backgroundColor: COLORS.orangeAccent,
+    borderRadius: 8,
+    marginTop: 8,
+    padding: 12,
+  },
+  modalCloseText: {
+    color: COLORS.white,
+    fontWeight: '600',
+  },
+  modalContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    width: '100%',
+  },
+  modalInput: {
+    backgroundColor: COLORS.lightGray,
+    borderColor: COLORS.borderLight,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 12,
+  },
+  modalSaveButton: {
+    backgroundColor: COLORS.greenAccent,
+  },
+  modalTitle: {
+    color: COLORS.primary,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  plusButton: {
+    color: COLORS.greenAccent,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  summaryCard: {
+    alignItems: 'center',
+    backgroundColor: COLORS.summaryBackground,
+    borderRadius: 12,
+    flex: 1,
+    padding: 16,
+  },
+  summaryContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  summaryTitle: {
+    color: COLORS.greenAccent,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  summaryValue: {
+    color: COLORS.darkBackground,
+    fontSize: 18,
+    fontWeight: '700',
+  },
+});
 
 export default function VendorDashboardScreen() {
   const [loading, setLoading] = useState(true);
-  const [feedback, setFeedback] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [products, setProducts] = useState([
+  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [products, setProducts] = useState<Product[]>([
     {
       id: 'p1',
       title: 'Tuk-Tuk Safari – Ella',
@@ -36,14 +214,14 @@ export default function VendorDashboardScreen() {
     },
   ]);
 
-  const [summary, setSummary] = useState({
+  const [summary] = useState<Summary>({
     totalEarnings: 87200,
     productsSold: 38,
     feedbackCount: 17,
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editCategory, setEditCategory] = useState('');
   const [editPrice, setEditPrice] = useState('');
@@ -143,7 +321,7 @@ export default function VendorDashboardScreen() {
             <Text style={styles.itemTitle}>
               {f.tourist} rated {f.rating} ⭐
             </Text>
-            <Text style={styles.itemSub}>"{f.comment}"</Text>
+            <Text style={styles.itemSub}>&quot;{f.comment}&quot;</Text>
           </View>
         ))}
       </View>
@@ -151,7 +329,7 @@ export default function VendorDashboardScreen() {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Your Products/Services</Text>
-          <TouchableOpacity onPress={() => alert('Add product form (mock)')}>
+          <TouchableOpacity onPress={() => Alert.alert('Add Product', 'Add product form (mock)')}>
             <Text style={styles.plusButton}>＋</Text>
           </TouchableOpacity>
         </View>
@@ -177,7 +355,6 @@ export default function VendorDashboardScreen() {
         ))}
       </View>
 
-      {/* Edit Modal */}
       <Modal visible={modalVisible} animationType='slide' transparent>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalBackdrop}>
@@ -205,7 +382,7 @@ export default function VendorDashboardScreen() {
               />
 
               <TouchableOpacity
-                style={[styles.modalCloseButton, { backgroundColor: '#4FB993' }]}
+                style={[styles.modalCloseButton, styles.modalSaveButton]}
                 onPress={handleSaveEdit}>
                 <Text style={styles.modalCloseText}>Save</Text>
               </TouchableOpacity>
@@ -222,149 +399,3 @@ export default function VendorDashboardScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: 16,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-  },
-  cardHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  cardTitle: {
-    color: '#F2994A',
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  container: {
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-  },
-  editButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#F2C94C',
-    borderRadius: 8,
-    marginTop: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-  },
-  editButtonText: {
-    color: '#121212',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  heading: {
-    color: '#005F8D',
-    fontSize: 26,
-    fontWeight: '700',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  itemSub: {
-    color: '#666',
-    fontSize: 14,
-    marginTop: 2,
-  },
-  itemTitle: {
-    color: '#005F8D',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  listItem: {
-    borderBottomColor: '#EEE',
-    borderBottomWidth: 1,
-    marginBottom: 12,
-    paddingBottom: 8,
-  },
-  loading: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  loadingText: {
-    color: '#999',
-    fontSize: 18,
-  },
-  modalBackdrop: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-  },
-  modalCloseButton: {
-    alignItems: 'center',
-    backgroundColor: '#F2994A',
-    borderRadius: 8,
-    marginTop: 8,
-    padding: 12,
-  },
-  modalCloseText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    width: '100%',
-  },
-  modalInput: {
-    backgroundColor: '#F0F0F0',
-    borderColor: '#DDD',
-    borderRadius: 10,
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 12,
-  },
-  modalTitle: {
-    color: '#005F8D',
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  plusButton: {
-    color: '#4FB993',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  summaryCard: {
-    alignItems: 'center',
-    backgroundColor: '#E6F4F1',
-    borderRadius: 12,
-    flex: 1,
-    padding: 16,
-  },
-  summaryContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  summaryTitle: {
-    color: '#4FB993',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  summaryValue: {
-    color: '#121212',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-});

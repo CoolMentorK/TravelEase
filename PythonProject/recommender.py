@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def recommend_itinerary(location, interests, days, budget, suitable_for, dataset_path='data/destinations.csv'):
     # Input validation
     if not isinstance(location, str) or not location.strip():
@@ -14,27 +15,23 @@ def recommend_itinerary(location, interests, days, budget, suitable_for, dataset
     if not isinstance(suitable_for, str):
         raise ValueError("Suitable_for must be a string")
 
-    # Load dataset
-    df = pd.read_csv(dataset_path)
-    df.columns = df.columns.str.strip()
-    # Rename 'address/location' to 'address' for consistency
-    if 'address/location' in df.columns:
-        df.rename(columns={'address/location': 'address'}, inplace=True)
+    # Load and clean dataset
+    data = pd.read_csv(dataset_path)
+    data.columns = data.columns.str.strip()
+    if 'address/location' in data.columns:
+        data.rename(columns={'address/location': 'address'}, inplace=True)
 
-    # Ensure required columns exist
     required_columns = ['name', 'category', 'tags', 'description', 'duration_hours', 'cost_usd', 'suitable_for']
     for col in required_columns:
-        if col not in df.columns:
+        if col not in data.columns:
             raise ValueError(f"Dataset missing required column: {col}")
 
-    # Add optional columns if missing
     optional_columns = ['distance_from_previous_km', 'address', 'opening_hours',
                         'best_time_to_visit', 'notes']
     for col in optional_columns:
-        if col not in df.columns:
-            df[col] = np.nan if col == 'distance_from_previous_km' else ''
+        if col not in data.columns:
+            data[col] = np.nan if col == 'distance_from_previous_km' else ''
 
-    # Parse cost_usd (handle 'Free', ranges, etc.)
     def parse_cost(val):
         if isinstance(val, str):
             val = val.strip().lower()
@@ -42,148 +39,143 @@ def recommend_itinerary(location, interests, days, budget, suitable_for, dataset
                 return 0.0
             if '-' in val:
                 try:
-                    parts = val.replace('$','').split('-')
+                    parts = val.replace('$', '').split('-')
                     return (float(parts[0]) + float(parts[1])) / 2
-                except:
+                except ValueError:
                     return np.nan
             try:
-                return float(val.replace('$',''))
-            except:
+                return float(val.replace('$', ''))
+            except ValueError:
                 return np.nan
         return val
-    df['cost_usd'] = df['cost_usd'].apply(parse_cost)
-    df['duration_hours'] = pd.to_numeric(df['duration_hours'], errors='coerce')
 
-    # Drop rows with NaN in cost_usd or duration_hours
-    df = df.dropna(subset=['cost_usd', 'duration_hours'])
+    data['cost_usd'] = data['cost_usd'].apply(parse_cost)
+    data['duration_hours'] = pd.to_numeric(data['duration_hours'], errors='coerce')
+    data = data.dropna(subset=['cost_usd', 'duration_hours'])
 
-    # Clean and filter dataset
-    df = df[df['tags'].notna() & df['tags'].apply(lambda x: isinstance(x, str))]
-    df = df[df['suitable_for'].notna() & df['suitable_for'].apply(lambda x: isinstance(x, str))]
-
-    # Normalize tags and suitable_for fields to lowercase and strip spaces
-    df['tags'] = df['tags'].str.lower().str.replace(' ', '')
-    df['suitable_for'] = df['suitable_for'].str.lower().str.replace(' ', '')
+    # Clean and filter
+    data = data[data['tags'].notna() & data['tags'].apply(lambda x: isinstance(x, str))]
+    data = data[data['suitable_for'].notna() & data['suitable_for'].apply(lambda x: isinstance(x, str))]
+    data['tags'] = data['tags'].str.lower().str.replace(' ', '')
+    data['suitable_for'] = data['suitable_for'].str.lower().str.replace(' ', '')
 
     interests_lower = [tag.lower().strip() for tag in interests]
     suitable_for_lower = suitable_for.lower().strip()
 
-    # Loosened filtering logic
-    filtered = df[df['tags'].apply(lambda x: any(tag in x.split(',') for tag in interests_lower))]
+    filtered_df = data[data['tags'].apply(lambda x: any(tag in x.split(',') for tag in interests_lower))]
     if suitable_for_lower:
-        filtered = filtered[filtered['suitable_for'].apply(lambda x: suitable_for_lower in x.split(',') if isinstance(x, str) else False)]
+        filtered_df = filtered_df[filtered_df['suitable_for'].apply(
+            lambda x: suitable_for_lower in x.split(',') if isinstance(x, str) else False)]
 
-    if filtered.empty:
-        # Try just interests
-        filtered = df[df['tags'].apply(lambda x: any(tag in x.split(',') for tag in interests_lower))]
-    if filtered.empty and suitable_for_lower:
-        # Try just suitable_for
-        filtered = df[df['suitable_for'].apply(lambda x: suitable_for_lower in x.split(',') if isinstance(x, str) else False)]
-    if filtered.empty:
+    if filtered_df.empty:
+        filtered_df = data[data['tags'].apply(lambda x: any(tag in x.split(',') for tag in interests_lower))]
+    if filtered_df.empty and suitable_for_lower:
+        filtered_df = data[data['suitable_for'].apply(
+            lambda x: suitable_for_lower in x.split(',') if isinstance(x, str) else False)]
+    if filtered_df.empty:
         raise ValueError("No activities match the given criteria. Try broadening your interests or suitable_for.")
 
-    df = filtered.copy()
-
-    # No geolocation: set distance_km to 0
-    df['distance_km'] = 0
-
     # Normalize scoring columns
+    filtered_df = filtered_df.copy()
+    filtered_df['distance_km'] = 0
+
     def normalize_series(series):
         min_val, max_val = series.min(), series.max()
         if max_val == min_val:
             return pd.Series([0] * len(series), index=series.index)
         return (series - min_val) / (max_val - min_val)
 
-    df['distance_km_norm'] = 0  # all zeros as no location distance
-    df['cost_usd_norm'] = normalize_series(df['cost_usd'])
-    df['distance_from_prev_norm'] = normalize_series(df['distance_from_previous_km'].fillna(0))
+    filtered_df['distance_km_norm'] = 0
+    filtered_df['cost_usd_norm'] = normalize_series(filtered_df['cost_usd'])
+    filtered_df['distance_from_prev_norm'] = normalize_series(filtered_df['distance_from_previous_km'].fillna(0))
+    filtered_df['score'] = filtered_df['cost_usd_norm'] * 0.6 + filtered_df['distance_from_prev_norm'] * 0.4
 
-    # Adjust scoring weights accordingly (e.g., cost 0.6, distance_from_prev 0.4)
-    df['score'] = df['cost_usd_norm'] * 0.6 + df['distance_from_prev_norm'] * 0.4
-
-    # Filter by budget per day and reasonable duration per day (8 hours max per day)
+    # Budget and time filtering
     max_cost_per_day = budget / days
-    max_duration_hours = days * 8
-    df = df[(df['cost_usd'] <= max_cost_per_day + 1e-10) & (df['duration_hours'] <= max_duration_hours)]
-
-    if df.empty:
+    max_total_duration = days * 8
+    filtered_df = filtered_df[
+        (filtered_df['cost_usd'] <= max_cost_per_day + 1e-10) &
+        (filtered_df['duration_hours'] <= max_total_duration)
+        ]
+    if filtered_df.empty:
         raise ValueError("No activities match the given criteria (after budget/time filtering). Try increasing your budget or days.")
 
-    # Separate attractions and restaurants
-    attractions = df[df['category'].str.lower().str.contains('attraction') | df['category'].str.lower().str.contains('nightlife')].copy()
-    restaurants = df[df['category'].str.lower().str.contains('restaurant')].copy()
-
-    # Sort by score (best first)
-    attractions = attractions.sort_values('score')
-    restaurants = restaurants.sort_values('score')
+    # Separate categories
+    attractions_df = filtered_df[filtered_df['category'].str.lower().str.contains('attraction|nightlife')].copy()
+    restaurants_df = filtered_df[filtered_df['category'].str.lower().str.contains('restaurant')].copy()
+    attractions_df = attractions_df.sort_values('score')
+    restaurants_df = restaurants_df.sort_values('score')
 
     used_attractions = set()
     used_restaurants = set()
     itinerary = []
     total_cost = 0.0
     total_duration = 0.0
-    for day in range(1, days + 1):
+
+    def add_activity(source_df, used_names_set, remaining_duration, remaining_budget):
+        for _, row in source_df.iterrows():
+            if row['name'] in used_names_set:
+                continue
+            if remaining_duration >= row['duration_hours'] and remaining_budget >= row['cost_usd']:
+                used_names_set.add(row['name'])
+                return row, row['cost_usd'], row['duration_hours']
+        return None, 0.0, 0.0
+
+
+    for day_num in range(1, days + 1):
         day_activities = []
         day_cost = 0.0
         day_duration = 0.0
-        # Morning attraction
-        for idx, row in attractions.iterrows():
-            if row['name'] not in used_attractions and day_duration + row['duration_hours'] <= 8 and day_cost + row['cost_usd'] <= max_cost_per_day:
-                day_activities.append(row)
-                used_attractions.add(row['name'])
-                day_cost += row['cost_usd']
-                day_duration += row['duration_hours']
-                break
-        # Lunch restaurant
-        for idx, row in restaurants.iterrows():
-            if row['name'] not in used_restaurants and day_duration + row['duration_hours'] <= 8 and day_cost + row['cost_usd'] <= max_cost_per_day:
-                day_activities.append(row)
-                used_restaurants.add(row['name'])
-                day_cost += row['cost_usd']
-                day_duration += row['duration_hours']
-                break
-        # Afternoon attraction
-        for idx, row in attractions.iterrows():
-            if row['name'] not in used_attractions and day_duration + row['duration_hours'] <= 8 and day_cost + row['cost_usd'] <= max_cost_per_day:
-                day_activities.append(row)
-                used_attractions.add(row['name'])
-                day_cost += row['cost_usd']
-                day_duration += row['duration_hours']
-                break
-        # Dinner restaurant
-        for idx, row in restaurants.iterrows():
-            if row['name'] not in used_restaurants and day_duration + row['duration_hours'] <= 8 and day_cost + row['cost_usd'] <= max_cost_per_day:
-                day_activities.append(row)
-                used_restaurants.add(row['name'])
-                day_cost += row['cost_usd']
-                day_duration += row['duration_hours']
-                break
-        # Fill remaining time with more attractions or restaurants if possible
-        for idx, row in pd.concat([attractions, restaurants]).sort_values('score').iterrows():
-            if row['name'] in used_attractions or row['name'] in used_restaurants:
+
+        # Add one activity from each category
+        for category_df, used_set in [
+            (attractions_df, used_attractions),
+            (restaurants_df, used_restaurants),
+            (attractions_df, used_attractions),
+            (restaurants_df, used_restaurants)
+        ]:
+            activity, cost, duration = add_activity(category_df, used_set, 8 - day_duration, max_cost_per_day - day_cost)
+            if activity is not None:
+                day_activities.append(activity)
+                day_cost += cost
+                day_duration += duration
+
+        # Fill with more
+        for _, option in pd.concat([attractions_df, restaurants_df]).sort_values('score').iterrows():
+            name = option['name']
+            if name in used_attractions or name in used_restaurants:
                 continue
-            if day_duration + row['duration_hours'] > 8 or day_cost + row['cost_usd'] > max_cost_per_day:
+            if day_duration + option['duration_hours'] > 8 or day_cost + option['cost_usd'] > max_cost_per_day:
                 continue
-            day_activities.append(row)
-            if row['category'].lower().find('restaurant') >= 0:
-                used_restaurants.add(row['name'])
+            day_activities.append(option)
+            if 'restaurant' in option['category'].lower():
+                used_restaurants.add(name)
             else:
-                used_attractions.add(row['name'])
-            day_cost += row['cost_usd']
-            day_duration += row['duration_hours']
-        # Format output
+                used_attractions.add(name)
+            day_cost += option['cost_usd']
+            day_duration += option['duration_hours']
+
+        formatted_activities = [
+            {col: act[col] for col in ['name', 'category', 'description', 'cost_usd', 'address',
+                                       'notes', 'duration_hours', 'opening_hours', 'best_time_to_visit']}
+            for _, act in pd.DataFrame(day_activities).iterrows()
+        ]
+
         itinerary.append({
-            'day': day,
-            'activities': [
-                {col: act[col] for col in ['name', 'category', 'description', 'cost_usd', 'address', 'notes', 'duration_hours', 'opening_hours', 'best_time_to_visit']}
-                for act in day_activities
-            ]
+            'day': day_num,
+            'activities': formatted_activities
         })
+
         total_cost += day_cost
         total_duration += day_duration
+
     summary = {
         'total_cost_usd': total_cost,
         'total_distance_km': 0,
-        'total_duration_hours': total_duration,
+        'total_duration_hours': total_duration
     }
-    return {'itinerary': itinerary, 'summary': summary}
+
+    return {
+        'itinerary': itinerary,
+        'summary': summary
+    }
