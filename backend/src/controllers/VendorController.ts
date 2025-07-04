@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import Vendor from '../models/Vendor'
 
 const createToken = (id: string): string => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, { expiresIn: '3d' })
+  return jwt.sign({ id , role:'vendor'}, process.env.JWT_SECRET as string, { expiresIn: '3d' })
 }
 
 export const registerVendor = async (

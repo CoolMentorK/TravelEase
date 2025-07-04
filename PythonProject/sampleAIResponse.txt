@@ -1,0 +1,51 @@
+{
+    "itinerary": [
+        {
+            "activities": [
+                {
+                    "address": "Unawatuna",
+                    "best_time_to_visit": "Evening",
+                    "category": "attraction",
+                    "cost_usd": 0.0,
+                    "description": "Well-known for swimming and nightlife",
+                    "duration_hours": 4,
+                    "name": "Unawatuna Beach",
+                    "notes": "Beach bars and events",
+                    "opening_hours": "All day"
+                },
+                {
+                    "address": "Galle Fort",
+                    "best_time_to_visit": "Evening",
+                    "category": "nightlife",
+                    "cost_usd": 15.0,
+                    "description": "Trendy rooftop bar with burgers and drinks",
+                    "duration_hours": 2,
+                    "name": "Rocket Burger Rooftop",
+                    "notes": "Live music",
+                    "opening_hours": "5pm-12am"
+                },
+                {
+                    "address": "Galle Fort",
+                    "best_time_to_visit": "Evening",
+                    "category": "nightlife",
+                    "cost_usd": 22.0,
+                    "description": "Modern bar with seafood and cocktails",
+                    "duration_hours": 2,
+                    "name": "The Tuna & The Crab",
+                    "notes": "Signature cocktails",
+                    "opening_hours": "12pm-11pm"
+                }
+            ],
+            "day": 1
+        }
+    ],
+    "metadata": {
+        "num_activities": 3,
+        "processing_time_ms": 175.43315887451172
+    },
+    "summary": {
+        "total_cost_usd": 37.0,
+        "total_distance_km": 0,
+        "total_duration_hours": 8.0
+    }
+}

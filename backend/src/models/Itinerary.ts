@@ -80,4 +80,4 @@ ItinerarySchema.pre(
   },
 )
 
-export default mongoose.model<IItinerary>('Itinerary', ItinerarySchema)
+export default mongoose.models.Itinerary || mongoose.model<IItinerary>('Itinerary', ItinerarySchema)
