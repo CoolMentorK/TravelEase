@@ -48,6 +48,15 @@ const PaymentScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Scan & Pay</Text>
 
+      <Button
+        title='Scan QR to Pay'
+        onPress={() =>
+          Alert.alert('Coming Soon', 'QR payment feature will be available in a future update.')
+        }
+        accessibilityLabel='Scan QR button'
+        color={COLORS.primary}
+      />
+
       <TextInput
         style={styles.input}
         placeholder='Vendor ID'
