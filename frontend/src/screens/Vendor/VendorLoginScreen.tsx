@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert , Image} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather.js';
 import { useNavigation } from '@react-navigation/native';
@@ -63,6 +63,12 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: 'center',
   },
+  logoImage: {
+    marginTop:-150,
+    width: 350,     // adjust width to your liking
+    height: 250,     // adjust height to your liking
+    alignSelf: 'center',
+  },
 });
 
 const VendorLoginScreen = () => {
@@ -94,7 +100,12 @@ const VendorLoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Vendor Login</Text>
+      <Image
+          source={require('../../../assests/logo2.png')} // adjust the path as per your project structure
+          style={styles.logoImage}
+          accessibilityLabel='TravelEase logo'
+          resizeMode="contain"
+      />
 
       <View style={styles.inputContainer}>
         <Icon name='mail' size={20} color={COLORS.primary} style={styles.icon} />

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   useColorScheme,
+    Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons.js';
 import getEnvVars from '../../config.tsx';
@@ -161,6 +162,12 @@ const styles = StyleSheet.create({
   titleLight: {
     color: COLORS.primary, // #005F8D
   },
+  logoImage: {
+    marginTop:-30,
+    width: 300,     // adjust width to your liking
+    height: 200,     // adjust height to your liking
+    alignSelf: 'center',
+  },
 });
 
 export default function SignupScreen() {
@@ -202,11 +209,12 @@ export default function SignupScreen() {
 
   return (
     <View style={[styles.container, isDarkMode ? styles.containerDark : styles.containerLight]}>
-      <Text
-        style={[styles.logo, isDarkMode ? styles.logoDark : styles.logoLight]}
-        accessibilityLabel='TravelEase logo'>
-        TravelEase
-      </Text>
+      <Image
+          source={require('../../assests/logo2.png')} // adjust the path as per your project structure
+          style={styles.logoImage}
+          accessibilityLabel='TravelEase logo'
+          resizeMode="contain"
+      />
 
       <Text style={[styles.title, isDarkMode ? styles.titleDark : styles.titleLight]}>
         Create Account
