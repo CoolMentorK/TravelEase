@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../constants/colors.ts';
 import getEnvVars from '../../config.tsx';
 
-const { API_BASE_URL , AI_API_URL } = getEnvVars();
+const { API_BASE_URL, AI_API_URL } = getEnvVars();
 
 interface PlanTripFormProps {
   onCancel: () => void;
@@ -58,6 +51,21 @@ interface ApiResponse {
 }
 
 const styles = StyleSheet.create({
+  activityCard: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 10,
+    marginBottom: 12,
+    padding: 12,
+  },
+  activityDetail: {
+    color: '#333',
+    fontSize: 14,
+  },
+  activityTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
   button: {
     flex: 1,
     marginHorizontal: 6,
@@ -70,8 +78,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.white,
     borderRadius: 12,
-    padding: 20,
     marginBottom: 20,
+    padding: 20,
   },
   error: {
     color: COLORS.errorTextPlan,
@@ -81,34 +89,19 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 10,
   },
+  itineraryContainer: {
+    paddingBottom: 50,
+    paddingHorizontal: 20,
+  },
+  saveButton: {
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
-  },
-  itineraryContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 50,
-  },
-  activityCard: {
-    backgroundColor: '#f2f2f2',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
-  },
-  activityTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  activityDetail: {
-    fontSize: 14,
-    color: '#333',
-  },
-  saveButton: {
-    marginHorizontal: 20,
-    marginVertical: 10,
   },
 });
 
@@ -134,7 +127,10 @@ export default function PlanTripForm({ onCancel, navigation }: PlanTripFormProps
 
     const requestData: PlanTripFormData = {
       location,
-      interests: interests.split(',').map(s => s.trim()).filter(Boolean),
+      interests: interests
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
       days: parseInt(days, 10),
       budget: parseFloat(budget),
       suitable_for: suitableFor,
@@ -158,9 +154,9 @@ export default function PlanTripForm({ onCancel, navigation }: PlanTripFormProps
 
   const toggleSelect = (activity: Activity) => {
     setSelectedItems(prev =>
-        prev.some(item => item.name === activity.name)
-            ? prev.filter(item => item.name !== activity.name)
-            : [...prev, activity]
+      prev.some(item => item.name === activity.name)
+        ? prev.filter(item => item.name !== activity.name)
+        : [...prev, activity],
     );
   };
 
@@ -195,59 +191,102 @@ export default function PlanTripForm({ onCancel, navigation }: PlanTripFormProps
 
       Alert.alert('Success', 'Itinerary saved successfully!');
       setSelectedItems([]);
-
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Could not save itinerary.');
     }
   };
 
   return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Text style={styles.title}>Plan My Trip</Text>
-          <TextInput label='Location' value={location} onChangeText={setLocation} style={styles.input} mode='outlined' />
-          <TextInput label='Interests (comma separated)' value={interests} onChangeText={setInterests} style={styles.input} mode='outlined' />
-          <TextInput label='Days' value={days} onChangeText={setDays} style={styles.input} mode='outlined' keyboardType='numeric' />
-          <TextInput label='Budget (USD)' value={budget} onChangeText={setBudget} style={styles.input} mode='outlined' keyboardType='numeric' />
-          <TextInput label='Suitable For' value={suitableFor} onChangeText={setSuitableFor} style={styles.input} mode='outlined' />
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <View style={styles.buttonRow}>
-            <Button mode='outlined' onPress={onCancel} style={styles.button}>Cancel</Button>
-            <Button mode='contained' onPress={handleSubmit} style={styles.button}>Plan Trip</Button>
-          </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Plan My Trip</Text>
+        <TextInput
+          label='Location'
+          value={location}
+          onChangeText={setLocation}
+          style={styles.input}
+          mode='outlined'
+        />
+        <TextInput
+          label='Interests (comma separated)'
+          value={interests}
+          onChangeText={setInterests}
+          style={styles.input}
+          mode='outlined'
+        />
+        <TextInput
+          label='Days'
+          value={days}
+          onChangeText={setDays}
+          style={styles.input}
+          mode='outlined'
+          keyboardType='numeric'
+        />
+        <TextInput
+          label='Budget (USD)'
+          value={budget}
+          onChangeText={setBudget}
+          style={styles.input}
+          mode='outlined'
+          keyboardType='numeric'
+        />
+        <TextInput
+          label='Suitable For'
+          value={suitableFor}
+          onChangeText={setSuitableFor}
+          style={styles.input}
+          mode='outlined'
+        />
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View style={styles.buttonRow}>
+          <Button mode='outlined' onPress={onCancel} style={styles.button}>
+            Cancel
+          </Button>
+          <Button mode='contained' onPress={handleSubmit} style={styles.button}>
+            Plan Trip
+          </Button>
         </View>
+      </View>
 
-        {itinerary && (
-            <View style={styles.itineraryContainer}>
-              <Text style={styles.title}>Recommendations</Text>
-              {itinerary.map(day => (
-                  <View key={day.day}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 8 }}>Day {day.day}</Text>
-                    {day.activities.map((activity, index) => {
-                      const isSelected = selectedItems.some(item => item.name === activity.name);
-                      return (
-                          <TouchableOpacity key={index} style={styles.activityCard} onPress={() => toggleSelect(activity)}>
-                            <Text style={styles.activityTitle}>
-                              {isSelected ? '✅ ' : ''}{activity.name}
-                            </Text>
-                            <Text style={styles.activityDetail}>📍 {activity.address}</Text>
-                            <Text style={styles.activityDetail}>🕓 {activity.best_time_to_visit} ({activity.opening_hours})</Text>
-                            <Text style={styles.activityDetail}>💲 ${activity.cost_usd}</Text>
-                            <Text style={styles.activityDetail}>⏱️ {activity.duration_hours} hrs</Text>
-                            <Text style={styles.activityDetail}>📝 {activity.description}</Text>
-                            <Text style={styles.activityDetail}>🔖 {activity.notes}</Text>
-                          </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-              ))}
-              {selectedItems.length > 0 && (
-                  <Button mode='contained' onPress={handleSaveItinerary} style={styles.saveButton}>
-                    Save Selected Itinerary
-                  </Button>
-              )}
+      {itinerary && (
+        <View style={styles.itineraryContainer}>
+          <Text style={styles.title}>Recommendations</Text>
+          {itinerary.map(day => (
+            <View key={day.day}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 8 }}>
+                Day {day.day}
+              </Text>
+              {day.activities.map((activity, index) => {
+                const isSelected = selectedItems.some(item => item.name === activity.name);
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.activityCard}
+                    onPress={() => toggleSelect(activity)}>
+                    <Text style={styles.activityTitle}>
+                      {isSelected ? '✅ ' : ''}
+                      {activity.name}
+                    </Text>
+                    <Text style={styles.activityDetail}>📍 {activity.address}</Text>
+                    <Text style={styles.activityDetail}>
+                      🕓 {activity.best_time_to_visit} ({activity.opening_hours})
+                    </Text>
+                    <Text style={styles.activityDetail}>💲 ${activity.cost_usd}</Text>
+                    <Text style={styles.activityDetail}>⏱️ {activity.duration_hours} hrs</Text>
+                    <Text style={styles.activityDetail}>📝 {activity.description}</Text>
+                    <Text style={styles.activityDetail}>🔖 {activity.notes}</Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
-        )}
-      </ScrollView>
+          ))}
+          {selectedItems.length > 0 && (
+            <Button mode='contained' onPress={handleSaveItinerary} style={styles.saveButton}>
+              Save Selected Itinerary
+            </Button>
+          )}
+        </View>
+      )}
+    </ScrollView>
   );
 }

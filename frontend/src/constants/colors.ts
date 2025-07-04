@@ -56,4 +56,9 @@ export const COLORS = {
   inputBorderLight: '#D1D1D1', // Input container border
   // Colors from TransactionHistoryScreen
   lightestGray: '#f8f8f8', // Transaction item background
+
+  primaryBlue: '#005F8D',
+  teaGreen: '#4FB993',
+  accentOrange: '#F2994A',
+  saffronYellow: '#F2C94C',
 } as const;

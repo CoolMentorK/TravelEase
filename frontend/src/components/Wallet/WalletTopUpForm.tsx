@@ -10,28 +10,39 @@ interface Props {
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: COLORS.accentOrange,
+    borderRadius: 10,
+    paddingVertical: 10,
+  },
+  buttonLabel: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   container: {
-    marginBottom: 20,
+    gap: 16,
   },
   input: {
-    borderColor: COLORS.borderGray, // Use COLORS.borderGray from colors.ts
-    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.borderGray,
+    borderRadius: 10,
     borderWidth: 1,
     fontSize: 16,
-    marginBottom: 12,
-    padding: 12,
+    padding: 14,
   },
   rateContainer: {
-    marginBottom: 12,
+    paddingTop: 4,
   },
   rateLabel: {
-    color: COLORS.mediumGray, // Use COLORS.mediumGray for #555
+    color: COLORS.textSecondary,
     fontSize: 14,
   },
   rateValue: {
-    color: COLORS.success, // Use COLORS.success for #2e7d32
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: COLORS.success,
+    fontSize: 20,
+    fontWeight: '700',
+    marginTop: 4,
   },
 });
 
@@ -65,13 +76,18 @@ const WalletTopUpForm: React.FC<Props> = ({ onTopUpSuccess }) => {
         style={styles.input}
         value={amount}
         onChangeText={setAmount}
+        accessibilityLabel='Top up amount input field'
       />
       <View style={styles.rateContainer}>
         <Text style={styles.rateLabel}>You’ll receive:</Text>
         <Text style={styles.rateValue}>LKR {converted.toFixed(2)}</Text>
       </View>
-      <Button mode='contained' onPress={handleTopUp}>
-        <Text>Top Up Wallet</Text>
+      <Button
+        mode='contained'
+        style={styles.button}
+        onPress={handleTopUp}
+        contentStyle={{ paddingVertical: 4 }}>
+        <Text style={styles.buttonLabel}>Top Up Wallet</Text>
       </Button>
     </View>
   );

@@ -9,29 +9,34 @@ interface Props {
 const styles = StyleSheet.create({
   amount: {
     color: COLORS.success,
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop: 4,
+    fontSize: 28,
+    fontWeight: '700',
   },
   container: {
-    backgroundColor: COLORS.lightGray,
-    borderRadius: 12,
-    marginBottom: 20,
-    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.borderGray,
+    borderRadius: 16,
+    borderWidth: 1,
+    elevation: 2,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   label: {
-    color: COLORS.mediumGray,
+    color: COLORS.textSecondary,
     fontSize: 16,
+    marginBottom: 6,
   },
 });
 
-const WalletBalance: React.FC<Props> = ({ balance }) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Current Balance:</Text>
-      <Text style={styles.amount}>LKR {balance.toFixed(2)}</Text>
-    </View>
-  );
-};
+const WalletBalance: React.FC<Props> = ({ balance }) => (
+  <View style={styles.container}>
+    <Text style={styles.label}>Current Balance</Text>
+    <Text style={styles.amount}>LKR {balance.toFixed(2)}</Text>
+  </View>
+);
 
 export default WalletBalance;
