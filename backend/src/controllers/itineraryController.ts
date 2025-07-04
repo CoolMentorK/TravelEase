@@ -48,6 +48,40 @@ export const getItinerary = async (req: Request, res: Response): Promise<void> =
   }
 }
 
+
+
+
+export const getItinerariesByUserId = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+  try {
+    const { userId } = req.params
+
+    const itineraries = await Itinerary.find({ userId })
+
+    if (itineraries.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: 'No itineraries found for this user',
+      })
+      return
+    }
+
+    res.status(200).json({
+      success: true,
+      data: itineraries,
+    })
+  } catch (error) {
+    console.error('Error fetching itineraries by userId:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch itineraries',
+    })
+  }
+}
+
+
 // Create a new itinerary
 export const createItinerary = async (req: Request, res: Response): Promise<void> => {
   try {

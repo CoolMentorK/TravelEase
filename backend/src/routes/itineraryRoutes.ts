@@ -8,7 +8,11 @@ import {
   addItineraryItem,
   updateItineraryItem,
   deleteItineraryItem,
+  getItinerariesByUserId
 } from 'controllers/itineraryController'
+import {saveGeneratedItinerary} from "controllers/saveGeneratedItinerary";
+import {protect} from "middlewares/authMiddleware";
+
 
 const router = express.Router()
 
@@ -18,6 +22,7 @@ router.get('/:id', getItinerary)
 router.post('/', createItinerary)
 router.put('/:id', updateItinerary)
 router.delete('/:id', deleteItinerary)
+router.post('/save-generated', protect, saveGeneratedItinerary)
 
 // Itinerary item routes
 router.post('/:id/items', addItineraryItem)
